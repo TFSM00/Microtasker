@@ -1,0 +1,107 @@
+<!-- 
+Every Sidebar Link Icon must have "me-2" in the class
+-->
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{ session.theme if session.theme else 'dark' }}">
+<head>
+  {% block head %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <title>{% block title %}Microtasker{% endblock %}</title>
+  
+  {% endblock %}
+</head>
+{% block body %}
+<body>
+<div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
+  <form method="post">
+      <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="button">
+        <i id="color-theme" class="bi bi-brightness-high-fill"></i>
+      </button>
+  </form>
+</div> 
+     
+  <div class="d-flex">
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <img class="me-2 pe-none" src="/static/kanban.png" width="35" height="35">
+      <span class="fs-4">Microtasker</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="{{ url_for('home') }}" class="nav-link {{'active' if request.path == '/'}}" aria-current="page">
+          <i class="bi bi-house me-2"></i>
+          Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ url_for('login') }}" class="nav-link {{'active' if request.path == '/login'}}" aria-current="page">
+          <i class="bi bi-box-arrow-in-right me-2"></i>
+          Login
+        </a>
+      </li>
+
+    </ul>
+    <hr>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+        <strong>mdo</strong>
+      </a>
+      <ul class="dropdown-menu text-small shadow">
+        <li><a class="dropdown-item" href="#">New project...</a></li>
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+      </ul>
+    </div>
+  </div>
+      {% block main %}
+      <main class="flex-grow-1">
+          {% block content%}
+          {% endblock %}
+      </main>
+      {% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  {% block script %}
+  <script>
+    if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
+      document.getElementById('color-theme').setAttribute('class', "bi bi-moon-stars-fill")
+    } else {
+      document.getElementById('color-theme').setAttribute('class', "bi bi-brightness-high-fill")
+    }
+    document.getElementById('btnSwitch').addEventListener('click',()=>{
+    if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
+        document.documentElement.setAttribute('data-bs-theme','light')
+        document.getElementById('color-theme').setAttribute('class', "bi bi-brightness-high-fill")
+        {% set _ = session.update({'theme': 'light'}) %}
+    }
+    else {
+        document.documentElement.setAttribute('data-bs-theme','dark')
+        document.getElementById('color-theme').setAttribute('class', "bi bi-moon-stars-fill")
+        {% set _ = session.update({'theme': 'dark'}) %}
+    }
+})
+  </script>
+  {% endblock %}
+</body>
+{% endblock %}
+</html>
+
+
+
+
+
+
+
+
+
+
