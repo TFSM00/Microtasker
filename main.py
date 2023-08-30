@@ -18,6 +18,12 @@ Session(app)
 
 #TODO: Add user database
 #TODO: Add user theme variable
+#TODO: Add dropdown functionality to cards
+#TODO: Add card route and template
+#TODO: Change board route to reflect database
+#TODO: Add new buttons to sidebar
+#TODO: Figure out drag-and-drop
+#TODO: Add functionality to change card column
 
 class Board(db.Model):
     __tablename__="boards"
@@ -38,10 +44,14 @@ class Board(db.Model):
 
 @app.route("/theme", methods=["POST"])
 def theme():
+    """
+    Receives a theme string and a path, saves the theme to a cookie
+    and redirects back to the page from the post request is made.
+    """
+
     session['theme'] = request.args.get('theme')
     path = request.args.get('path')
-    print(session['theme'])
-    return redirect(url_for(path))
+    return redirect(path)
 
 
 @app.route("/")
@@ -53,9 +63,8 @@ def login():
     return render_template('login.html')
 
 @app.route("/board/<int:id>")
-def board():
-    session['theme'] = None
-    pass
+def board(id):
+    return render_template('board.html')
     
 
 if __name__ == "__main__":
