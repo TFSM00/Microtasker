@@ -3,7 +3,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 -->
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{ session.theme if session.theme else 'dark' }}">
+<html lang="en" data-bs-theme="{{ session['theme'] }}">
 <head>
   {% block head %}
   <meta charset="UTF-8">
@@ -18,11 +18,17 @@ Every Sidebar Link Icon must have "me-2" in the class
 {% block body %}
 <body>
 <div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
-  <form method="post">
-      <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="button">
+    {# Create a call to theme to change it and save to current session #}
+    {% if session.theme=='dark' %}
+    <form method="post" action="{{ url_for('theme', theme='white', path=request.endpoint)}}">
+    {% else %}
+    <form method="post" action="{{ url_for('theme', theme='dark', path=request.endpoint)}}">
+    {% endif %}
+      <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="submit" >
         <i id="color-theme" class="bi bi-brightness-high-fill"></i>
       </button>
-  </form>
+    </form>
+    {######################################################################}
 </div> 
      
   <div class="d-flex">
@@ -82,12 +88,11 @@ Every Sidebar Link Icon must have "me-2" in the class
     if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
         document.documentElement.setAttribute('data-bs-theme','light')
         document.getElementById('color-theme').setAttribute('class', "bi bi-brightness-high-fill")
-        {% set _ = session.update({'theme': 'light'}) %}
+
     }
     else {
         document.documentElement.setAttribute('data-bs-theme','dark')
         document.getElementById('color-theme').setAttribute('class', "bi bi-moon-stars-fill")
-        {% set _ = session.update({'theme': 'dark'}) %}
     }
 })
   </script>
