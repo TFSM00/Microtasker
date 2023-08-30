@@ -20,9 +20,9 @@ Every Sidebar Link Icon must have "me-2" in the class
 <div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
     {# Create a call to theme to change it and save to current session #}
     {% if session.theme=='dark' %}
-    <form method="post" action="{{ url_for('theme', theme='white', path=request.endpoint)}}">
+    <form method="post" action="{{ url_for('theme', theme='white', path=request.path)}}">
     {% else %}
-    <form method="post" action="{{ url_for('theme', theme='dark', path=request.endpoint)}}">
+    <form method="post" action="{{ url_for('theme', theme='dark', path=request.path)}}">
     {% endif %}
       <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="submit" >
         <i id="color-theme" class="bi bi-brightness-high-fill"></i>
@@ -32,7 +32,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 </div> 
      
   <div class="d-flex">
-      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 230px;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
       <img class="me-2 pe-none" src="/static/kanban.png" width="35" height="35">
       <span class="fs-4">Microtasker</span>
