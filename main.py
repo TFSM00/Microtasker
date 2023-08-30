@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, make_response
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
@@ -14,6 +14,7 @@ Bootstrap(app)
 app.app_context().push()
 db.init_app(app)
 Session(app)
+
 
 #TODO: Add user database
 #TODO: Add user theme variable
@@ -35,10 +36,17 @@ class Board(db.Model):
 # db.session.add(newBoard)
 # db.session.commit()
 
+@app.route("/theme", methods=["POST"])
+def theme():
+    session['theme'] = request.args.get('theme')
+    path = request.args.get('path')
+    print(session['theme'])
+    return redirect(url_for(path))
+
 
 @app.route("/")
 def home():
-    return render_template('base.html')
+    return render_template('index.html')
 
 @app.route("/login")
 def login():
@@ -46,6 +54,8 @@ def login():
 
 @app.route("/board/<int:id>")
 def board():
+    session['theme'] = None
+    pass
     
 
 if __name__ == "__main__":
