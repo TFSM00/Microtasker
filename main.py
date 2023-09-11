@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
 from flask_session import Session
 from datetime import datetime as dt
-from utils.funcs import *
+from utils.funcs import taskTimeAgo
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -19,13 +19,12 @@ Session(app)
 
 
 #TODO: Add user database
-#TODO: Add user theme variable
 #TODO: Add dropdown functionality to cards
 #TODO: Add card route and template
-#TODO: Change board route to reflect database
 #TODO: Add new buttons to sidebar
 #TODO: Figure out drag-and-drop
 #TODO: Add functionality to change card column
+#TODO: Add user login and show user boards in a dropdown in sidebar
 
 class Board(db.Model):
     __tablename__="boards"
@@ -83,7 +82,8 @@ def board(id):
     if request.method == 'GET':
         boardData = db.session.get(Board, id)
         formattedTDD = taskTimeAgo(boardData.tdd)
-        return render_template('board.html', tdd = formattedTDD)
+        keysTDD = list(formattedTDD.keys())
+        return render_template('board.html', tdd = formattedTDD, keys = keysTDD)
     
 
 if __name__ == "__main__":
