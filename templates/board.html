@@ -5,40 +5,24 @@
 
 <div class="container">
     <div class="row">
+        {% for col in tdd %}
         <div class="col-3 border board-col">
-        <h4 class="mb-4">To Do:</h4>
-            <div class="card w-100 mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="card-title" style="display: inline;">Card title</h5>
-                        <span class="badge bg-primary rounded-pill">1</span>
+            <h4 class="mb-4">{{ col }}:</h4>
+            {% for task in tdd[col] %}
+                <div class="card w-100 mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title" style="display: inline;">{{ task }}</h5>
+                            <span class="badge bg-primary rounded-pill">1</span>
+                        </div>
+                        <p class="card-text m-0">{{ tdd[col][task][0] }}</p>
+                        <small>{{ tdd[col][task][1] }}</small>
                     </div>
-                    <p class="card-text m-0">With supporting text below as a natural lead-in to additional content.</p>
-                    <small>3 days ago</small>
                 </div>
-            </div>
-            <div class="card w-100 mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
-        <div class="col-3 border">
-        <h4>Doing:</h4>
-         <div class="card w-100 mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>  
-        </div>
-        <div class="col-3 border">
-        <h4>Review:</h4>
-        </div>
-        <div class="col-3 border">
-        <h4>Done:</h4>
-        </div>
+        {% endfor %}
+        
     </div>
 
 </div>
