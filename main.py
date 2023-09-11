@@ -26,6 +26,7 @@ Session(app)
 #TODO: Figure out drag-and-drop
 #TODO: Add functionality to change card column
 #TODO: Add user login and show user boards in a dropdown in sidebar
+#TODO: Fix taskTimeAgo to include days ago
 
 class Board(db.Model):
     __tablename__="boards"
@@ -98,6 +99,39 @@ def delete(id, task):
     db.session.commit()
     return redirect(url_for('board', id=1))
 
+@app.route("/next/<int:id>/<task>")
+def next(id, task):
+    boardData = db.session.get(Board, id)
+    data = boardData.tdd.copy()
+    for index, col in enumerate(data):
+        if task in data[col]:
+            try:
+                next_col = list(data.keys())[index + 1]
+                data[next_col][task] = data[col][task]
+                del data[col][task]
+            except IndexError:
+                pass
+            break
+    db.session.query(Board).filter_by(id=id).update({'tdd': data})
+    db.session.commit()
+    return redirect(url_for('board', id=1))
+
+@app.route("/previous/<int:id>/<task>")
+def previous(id, task):
+    boardData = db.session.get(Board, id)
+    data = boardData.tdd.copy()
+    for index, col in enumerate(data):
+        if task in data[col]:
+            try:
+                prev_col = list(data.keys())[index - 1]
+                data[prev_col][task] = data[col][task]
+                del data[col][task]
+            except IndexError:
+                pass
+            break
+    db.session.query(Board).filter_by(id=id).update({'tdd': data})
+    db.session.commit()
+    return redirect(url_for('board', id=1))
 
 if __name__ == "__main__":
     app.run(debug=True)
