@@ -7,9 +7,9 @@ def taskTimeAgo(tdd: dict) -> str:
             timeAgo = str(dt.now() - dateCreated).split(":")
             if int(timeAgo[0]) > 0:
                 if int(timeAgo[0]) == 1:
-                    cardTimeLabel += "1 day ago"
+                    cardTimeLabel += "1 hour ago"
                 else:
-                    cardTimeLabel += f"{int(timeAgo[0])} days ago"
+                    cardTimeLabel += f"{int(timeAgo[0])} hours ago"
             else:
                 if int(timeAgo[1]) > 0:
                     if int(timeAgo[1]) == 1:
