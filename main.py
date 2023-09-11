@@ -5,6 +5,7 @@ from sqlalchemy.dialects.sqlite import JSON
 from flask_session import Session
 from datetime import datetime as dt
 from utils.funcs import taskTimeAgo
+import time
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -44,7 +45,8 @@ class Board(db.Model):
 # db.session.commit()
 
 
-# daboard = db.session.query(Board).get(1)
+
+# daboard = db.session.get(Board, 1)
 # daboard.tdd = {
 #     "To Do": {
 #         "Task 1": ["Do something", f"{dt.now()}"],
@@ -77,14 +79,25 @@ def home():
 def login():
     return render_template('login.html')
 
-@app.route("/board/<int:id>", methods=["GET", "POST"])
+@app.route("/board/<int:id>", methods=["GET"])
 def board(id):
+    boardData = db.session.get(Board, id)
+    formattedTDD = taskTimeAgo(boardData.tdd)
+    keysTDD = list(formattedTDD.keys())
     if request.method == 'GET':
-        boardData = db.session.get(Board, id)
-        formattedTDD = taskTimeAgo(boardData.tdd)
-        keysTDD = list(formattedTDD.keys())
         return render_template('board.html', tdd = formattedTDD, keys = keysTDD)
-    
+
+@app.route("/delete/<int:id>/<task>", methods=["GET"])
+def delete(id, task):
+    boardData = db.session.get(Board, id)
+    data = boardData.tdd.copy()
+    for col in data:
+        if task in data[col]:
+            del data[col][task]
+    db.session.query(Board).filter_by(id=id).update({'tdd': data})
+    db.session.commit()
+    return redirect(url_for('board', id=1))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
