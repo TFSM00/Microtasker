@@ -3,6 +3,8 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
 from flask_session import Session
+from datetime import datetime as dt
+from utils.funcs import *
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -42,6 +44,20 @@ class Board(db.Model):
 # db.session.add(newBoard)
 # db.session.commit()
 
+
+# daboard = db.session.query(Board).get(1)
+# daboard.tdd = {
+#     "To Do": {
+#         "Task 1": ["Do something", f"{dt.now()}"],
+#         "Task 2": ["Do other thing", f"{dt.now()}"]
+#     },
+#     "Doing": {"Task 3": ["Doing thing", f"{dt.now()}"]},
+#     "Review": {"Task 4": ["Review this", f"{dt.now()}"]},
+#     "Done": {"Task 5": ["Done this", f"{dt.now()}"]}
+# }
+
+# db.session.commit()
+
 @app.route("/theme", methods=["POST"])
 def theme():
     """
@@ -62,9 +78,12 @@ def home():
 def login():
     return render_template('login.html')
 
-@app.route("/board/<int:id>")
+@app.route("/board/<int:id>", methods=["GET", "POST"])
 def board(id):
-    return render_template('board.html')
+    if request.method == 'GET':
+        boardData = db.session.get(Board, id)
+        formattedTDD = taskTimeAgo(boardData.tdd)
+        return render_template('board.html', tdd = formattedTDD)
     
 
 if __name__ == "__main__":
