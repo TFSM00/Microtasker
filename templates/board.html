@@ -20,33 +20,31 @@
                                 </div>
                                 <div class="col-auto d-flex flex-column justify-content-between align-item gap-1">
                                     <button type="submit" class="btn btn-warning px-1 py-1 lh-1">Edit</button>
-                                    <form method="post" id="delete" name="{{ task }}>
-                                        <button type="submit" class="btn btn-danger px-1 py-1 lh-1 ">Delete</button>
-                                    </form>
+                                    <a href="{{ url_for('delete', id=1, task=task) }}" class="text-decoration-none">
+                                        <button class="btn btn-danger px-1 py-1 lh-1">Delete</button>
+                                    </a>
                                     {% if col==keys[0] %}
-                                        <form method="post" id="right" name="{{ task }}>
-                                            <button type="submit" class="btn btn-primary px-1 py-0">
-                                                <i class="bi bi-arrow-right"></i>
-                                            </button>
-                                        </form>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <button class="btn btn-primary px-1 py-0">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    
+                                    </div>
                                     {% elif col==keys[-1] %}
-                                         <form method="post" id="left" name="{{ task }}>
-                                            <button type="submit" class="btn btn-primary px-1 py-0">
-                                                <i class="bi bi-arrow-left"></i>
-                                            </button>
-                                        </form>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <button class="btn btn-primary px-1 py-0">
+                                            <i class="bi bi-arrow-left"></i>
+                                        </button>
+                                    </div>
                                     {% else %}
                                     <div class="d-flex justify-content-center gap-1">
-                                        <form method="post" id="left" name="{{ task }}">
-                                            <button type="submit" class="btn btn-primary px-1 py-0">
-                                                <i class="bi bi-arrow-left"></i>
-                                            </button>
-                                        </form>
-                                        <form method="post" id="right" name="{{ task }}>
-                                            <button type="submit" class="btn btn-primary px-1 py-0">
-                                                <i class="bi bi-arrow-right"></i>
-                                            </button>
-                                        </form>
+                                        <button class="btn btn-primary px-1 py-0">
+                                            <i class="bi bi-arrow-left"></i>
+                                        </button>
+                                
+                                        <button class="btn btn-primary px-1 py-0">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </button>
                                     </div>
                                     {% endif %}
                                 </div>
