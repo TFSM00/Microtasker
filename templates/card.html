@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{{ super() }}
+    <link rel="stylesheet" href="/static/css/create-card.css">
+{% endblock %}
+
+{% block main %}
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+  <form class="create-card d-column align-center" action="{{ url_for('createcard') }}" method="post" novalidate>
+    <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
+    <h1 class="h3 mb-3 fw-normal">Register Account</h1>
+
+    {{ form.crsf_token }}
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='card_content') }}
+
+    <div >
+        {{ form.card_name.label(class_='form-label') }}
+        {{ form.card_name(class_='form-control card-name') }}
+        {% for err in form.card_name.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
+    </div>
+    <br>
+    <div >
+        {{ form.card_subtitle.label(class_='form-label') }}
+        {{ form.card_subtitle(class_='form-control card-subtitle') }}
+        {% for err in form.card_subtitle.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
+    </div>
+    <br>
+    <div >
+        {{ form.card_content.label(class_='form-label') }}
+        {{ form.card_content(class_='form-control card-content') }}
+        {% for err in form.card_content.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
+    </div>
+    <br>
+    {{ form.submit(class_='btn btn-primary w-100 py-2') }}
+  </form>
+</main>
+{% endblock %}
+{% block script %}
+{{ super() }}
+{% endblock %}
