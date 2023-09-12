@@ -15,22 +15,33 @@
     <div class="form-floating">
         {{ form.username(class_='form-control', type_='email', size=40) }}
         {{ form.username.label }}
+        {% for err in form.username.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
     </div>
     <br>
     <div class="form-floating">
         {{ form.email(class_='form-control', size=40) }}
         {{ form.email.label }}
+        {% for err in form.email.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
     </div>
     <br>
     <div class="form-floating">
         {{ form.password(class_='form-control', size=40) }}
         {{ form.password.label }}
+        {% for err in form.password.errors %}
+			<span style="color:red">{{ err }}</span>
+		{% endfor %}
     </div>
-
-    <div class="form-check text-start my-3">
-        {{ form.remember_me(class_='form-check-input')}}
-        {{ form.remember_me.label(class_="form-check-label")}}
-    </div>
+    <br>
+    {{ form.theme.label }}
+    {{ form.theme(class_='form-select' ,size=40) }}
+    {% for err in form.theme.errors %}
+        <span style="color:red">{{ err }}</span>
+    {% endfor %}
+    <br>
     {{ form.submit(class_='btn btn-primary w-100 py-2') }}
   </form>
 </main>
