@@ -2,9 +2,13 @@ from flask import Flask, render_template, redirect, url_for, session, request, m
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from flask_session import Session
 from datetime import datetime as dt
 from utils.funcs import taskTimeAgo
+from utils.forms import RegisterForm, LoginForm
+
 import time
 
 db = SQLAlchemy()
@@ -17,6 +21,8 @@ Bootstrap(app)
 app.app_context().push()
 db.init_app(app)
 Session(app)
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 
 #TODO: Add user database
@@ -26,13 +32,23 @@ Session(app)
 #TODO: Figure out drag-and-drop
 #TODO: Add functionality to change card column
 #TODO: Add user login and show user boards in a dropdown in sidebar
-#TODO: Fix taskTimeAgo to include days ago
+#TODO: Port theme function to the user and not the session
 
 class Board(db.Model):
     __tablename__="boards"
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(250), nullable = False)
     tdd = db.Column(JSON, nullable = False)
+
+# class User(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     email = db.Column(db.String(100), unique=True)
+#     password = db.Column(db.String(100))
+#     name = db.Column(db.String(1000))
+
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return db.session.get(User, user_id)
 
 # newBoard = Board(
 #     title = "Main",
@@ -79,6 +95,11 @@ def home():
 @app.route("/login")
 def login():
     return render_template('login.html')
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    return render_template('register.html', form=form)
 
 @app.route("/board/<int:id>", methods=["GET"])
 def board(id):

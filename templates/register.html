@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{{ super() }}
+    <link rel="stylesheet" href="/static/css/sign-in.css">
+{% endblock %}
+
+{% block main %}
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+  <form class="form-signin" action="{{ url_for('register') }}" method="post" novalidate>
+    <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
+    <h1 class="h3 mb-3 fw-normal">Register Account</h1>
+
+    {{ form.crsf_token }}
+    <div class="form-floating">
+        {{ form.username(class_='form-control', type_='email', size=40) }}
+        {{ form.username.label }}
+    </div>
+    <br>
+    <div class="form-floating">
+        {{ form.email(class_='form-control', size=40) }}
+        {{ form.email.label }}
+    </div>
+    <br>
+    <div class="form-floating">
+        {{ form.password(class_='form-control', size=40) }}
+        {{ form.password.label }}
+    </div>
+
+    <div class="form-check text-start my-3">
+        {{ form.remember_me(class_='form-check-input')}}
+        {{ form.remember_me.label(class_="form-check-label")}}
+    </div>
+    {{ form.submit(class_='btn btn-primary w-100 py-2') }}
+  </form>
+</main>
+{% endblock %}
+{% block script %}
+{{ super() }}
+{% endblock %}
