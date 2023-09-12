@@ -7,7 +7,8 @@ from flask_bootstrap import Bootstrap
 from flask_login import (LoginManager, UserMixin, current_user, login_required,
                          login_user, logout_user)
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.sqlite import JSON
+import json
+from sqlalchemy.dialects.sqlite import JSON, B
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_session import Session
@@ -45,8 +46,8 @@ class Board(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(250), nullable = False)
     tdd = db.Column(JSON)
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # user = db.relationship("User", back_populates='boards')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates='boards')
 
 class User(UserMixin, db.Model):
     __tablename__='users'
@@ -54,9 +55,27 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), nullable=False, unique=True)
     password = db.Column(db.String(500), nullable=False)
     username = db.Column(db.String(1000), unique=True, nullable=False)
-    boards = db.relationship('Board', backref='user')
+    boards = db.relationship('Board', back_populates='user')
+    columns = db.relationship('Column', back_populates='user')
+    cards = db.relationship('Card', back_populates='user')
     # False is Dark, True is Light
     theme = db.Column(db.Boolean, default=True)
+
+class Column(db.Model):
+    __tablename__='cols'
+    id = db.Column(db.Integer, primary_key=True)
+    column_name = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates='boards')
+
+class Card(db.Model):
+    __tablename__='cards'
+    id = db.Column(db.Integer, primary_key=True)
+    card_name = db.Column(db.String(50), nullable=False)
+    card_subtitle = db.Column(db.String(150))
+    card_content = db.Column(db.String(4000))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates='cards')
 
 # @login_manager.user_loader
 # def load_user(user_id):
@@ -202,10 +221,10 @@ def previous(id, task):
     db.session.commit()
     return redirect(url_for('board', id=1))
 
-@app.route("/createcard", methods=["GET", "POST"])
-def createcard():
+@app.route("/card/<int:id>", methods=["GET", "POST"])
+def card(id):
     form = CreateCardForm()
-    return render_template('create_card.html', form=form)
+    return render_template('card.html', form=form)
 
 
 if __name__ == "__main__":
