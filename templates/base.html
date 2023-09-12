@@ -52,8 +52,14 @@ Every Sidebar Link Icon must have "me-2" in the class
         </a>
       </li>
       <li class="nav-item">
+        <a href="{{ url_for('register') }}" class="nav-link {{'active' if request.path == '/register'}}" aria-current="page">
+          <i class="bi bi-r-square me-2"></i>
+          Register
+        </a>
+      </li>
+      <li class="nav-item">
         <a href="{{ url_for('board', id=1) }}" class="nav-link {{'active' if request.path == '/board'}}" aria-current="page">
-          <i class="bi bi-box-arrow-in-right me-2"></i>
+          <i class="bi bi-clipboard-data me-2"></i>
           Board
         </a>
       </li>
