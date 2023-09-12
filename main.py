@@ -8,11 +8,11 @@ from flask_login import (LoginManager, UserMixin, current_user, login_required,
                          login_user, logout_user)
 from flask_sqlalchemy import SQLAlchemy
 import json
-from sqlalchemy.dialects.sqlite import JSON, B
+from sqlalchemy.dialects.sqlite import JSON
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_session import Session
-from utils.forms import CreateCardForm, LoginForm, RegisterForm
+from utils.forms import CreateCardForm, LoginForm, RegisterForm, CreateBoardForm, AddColForm
 from utils.funcs import taskTimeAgo
 
 db = SQLAlchemy()
@@ -26,8 +26,8 @@ app.app_context().push()
 db.init_app(app)
 Session(app)
 ckeditor = CKEditor(app)
-# login_manager = LoginManager()
-# login_manager.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 #TODO: Add dropdown functionality to cards
@@ -45,9 +45,11 @@ class Board(db.Model):
     __tablename__="boards"
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(250), nullable = False)
-    tdd = db.Column(JSON)
+    # tdd = db.Column(JSON)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='boards')
+    columns = db.relationship('Column', back_populates='user')
+    cards = db.relationship('Card', back_populates='user')
 
 class User(UserMixin, db.Model):
     __tablename__='users'
@@ -67,6 +69,9 @@ class Column(db.Model):
     column_name = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='boards')
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
+    board = db.relationship("Board", back_populates='columns')
+    cards = db.relationship('Card', back_populates='user')
 
 class Card(db.Model):
     __tablename__='cards'
@@ -76,10 +81,12 @@ class Card(db.Model):
     card_content = db.Column(db.String(4000))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='cards')
+    column_id = db.Column(db.Integer, db.ForeignKey('cols.id'))
+    column = db.relationship("Column", back_populates='cards')
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return db.session.get(User, user_id)
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, user_id)
 
 # newBoard = Board(
 #     title = "Main",
@@ -225,6 +232,36 @@ def previous(id, task):
 def card(id):
     form = CreateCardForm()
     return render_template('card.html', form=form)
+
+@app.route("/createboard", methods=["GET", "POST"])
+def createboard():
+    form = CreateBoardForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            new_board = Board(
+                title = form.board_name.data,
+                user = current_user
+            )
+            db.session.add(new_board)
+            db.session.commit()
+            board_id = db.session.query(Board).filter_by(user=current_user, title=form.board_name.data).last().id
+            return redirect(url_for('addcol', id = board_id))
+    else:
+        return render_template('createboard.html', form=form)
+    
+@app.route("/addcol/<int:id>", methods=["GET", "POST"])
+def addcol(id):
+    form = AddColForm()
+    if request.method == "POST":
+        pass
+    else:
+        board_cols = db.session.get(Board, id).columns
+        print(board_cols)
+        return render_template('addcolumn.html', form = form, cols = board.columns)
+    
+
+
+
 
 
 if __name__ == "__main__":
