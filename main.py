@@ -200,7 +200,7 @@ def delete(id, task):
     return redirect(url_for('board', id=1))
 
 @app.route("/next/<int:id>/<task>")
-def next(id, task):
+def nextcol(id, task):
     boardData = db.session.get(Board, id)
     data = boardData.tdd.copy()
     for index, col in enumerate(data):
@@ -217,7 +217,7 @@ def next(id, task):
     return redirect(url_for('board', id=1))
 
 @app.route("/previous/<int:id>/<task>")
-def previous(id, task):
+def previouscol(id, task):
     boardData = db.session.get(Board, id)
     data = boardData.tdd.copy()
     for index, col in enumerate(data):
