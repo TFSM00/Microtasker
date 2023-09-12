@@ -1,7 +1,7 @@
 from datetime import datetime as dt
 
 from flask import (Flask, flash, make_response, redirect, render_template,
-                   request, session, url_for)
+                   request, session, url_for, get_flashed_messages)
 from flask_ckeditor import CKEditor
 from flask_bootstrap import Bootstrap
 from flask_login import (LoginManager, UserMixin, current_user, login_required,
@@ -48,8 +48,8 @@ class Board(db.Model):
     # tdd = db.Column(JSON)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='boards')
-    columns = db.relationship('Column', back_populates='user')
-    cards = db.relationship('Card', back_populates='user')
+    columns = db.relationship('Column', back_populates='board')
+    cards = db.relationship('Card', back_populates='board')
 
 class User(UserMixin, db.Model):
     __tablename__='users'
@@ -61,17 +61,17 @@ class User(UserMixin, db.Model):
     columns = db.relationship('Column', back_populates='user')
     cards = db.relationship('Card', back_populates='user')
     # False is Dark, True is Light
-    theme = db.Column(db.Boolean, default=True)
+    theme = db.Column(db.String(10), default='light')
 
 class Column(db.Model):
     __tablename__='cols'
     id = db.Column(db.Integer, primary_key=True)
     column_name = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates='boards')
+    user = db.relationship("User", back_populates='columns')
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='columns')
-    cards = db.relationship('Card', back_populates='user')
+    cards = db.relationship('Card', back_populates='column')
 
 class Card(db.Model):
     __tablename__='cards'
@@ -83,10 +83,15 @@ class Card(db.Model):
     user = db.relationship("User", back_populates='cards')
     column_id = db.Column(db.Integer, db.ForeignKey('cols.id'))
     column = db.relationship("Column", back_populates='cards')
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
+    board = db.relationship("Board", back_populates='cards')
 
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, user_id)
+
+# db.drop_all()
+# db.create_all()
 
 # newBoard = Board(
 #     title = "Main",
@@ -122,6 +127,7 @@ def theme():
     """
 
     session['theme'] = request.args.get('theme')
+    
     path = request.args.get('path')
     return redirect(path)
 
@@ -154,7 +160,6 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            
             user = db.session.query(User).filter_by(email=request.form["email"]).first()
             if user:
                 flash("User already exists. Login instead.")
