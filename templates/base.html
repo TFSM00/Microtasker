@@ -2,6 +2,18 @@
 Every Sidebar Link Icon must have "me-2" in the class
 -->
 
+{% macro theme() %}
+  {% if current_user.is_authenticated %}
+    {% if current_user.theme==True %}
+      white
+    {% else %}
+      dark
+    {% endif %}
+  {% else %}
+    session['theme']
+  {% endif %}
+{% endmacro %}
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="{{ session['theme'] }}">
 <head>
@@ -46,6 +58,14 @@ Every Sidebar Link Icon must have "me-2" in the class
         </a>
       </li>
       <li class="nav-item">
+        <a href="{{ url_for('board', id=1) }}" class="nav-link {{'active' if request.path == '/board'}}" aria-current="page">
+          <i class="bi bi-clipboard-data me-2"></i>
+          Board
+        </a>
+      </li>
+      {% if current_user.is_authenticated %}
+      {% else %}
+      <li class="nav-item">
         <a href="{{ url_for('login') }}" class="nav-link {{'active' if request.path == '/login'}}" aria-current="page">
           <i class="bi bi-box-arrow-in-right me-2"></i>
           Login
@@ -57,19 +77,15 @@ Every Sidebar Link Icon must have "me-2" in the class
           Register
         </a>
       </li>
-      <li class="nav-item">
-        <a href="{{ url_for('board', id=1) }}" class="nav-link {{'active' if request.path == '/board'}}" aria-current="page">
-          <i class="bi bi-clipboard-data me-2"></i>
-          Board
-        </a>
-      </li>
+      {% endif %}
 
     </ul>
     <hr>
+    {% if current_user.is_authenticated %}
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>mdo</strong>
+        <strong>{{ current_user.username }}</strong>
       </a>
       <ul class="dropdown-menu text-small shadow">
         <li><a class="dropdown-item" href="#">New project...</a></li>
@@ -79,6 +95,9 @@ Every Sidebar Link Icon must have "me-2" in the class
         <li><a class="dropdown-item" href="#">Sign out</a></li>
       </ul>
     </div>
+    {% else %}
+    {% endif %}
+
   </div>
       {% block main %}
       <main class="flex-grow-1">
