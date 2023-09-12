@@ -1,15 +1,18 @@
-from flask import Flask, render_template, redirect, url_for, session, request, make_response
+from datetime import datetime as dt
+
+from flask import (Flask, flash, make_response, redirect, render_template,
+                   request, session, url_for)
+from flask_ckeditor import CKEditor
 from flask_bootstrap import Bootstrap
+from flask_login import (LoginManager, UserMixin, current_user, login_required,
+                         login_user, logout_user)
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.sqlite import JSON
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from flask_session import Session
-from datetime import datetime as dt
-from utils.funcs import taskTimeAgo
-from utils.forms import RegisterForm, LoginForm
+from werkzeug.security import check_password_hash, generate_password_hash
 
-import time
+from flask_session import Session
+from utils.forms import CreateCardForm, LoginForm, RegisterForm
+from utils.funcs import taskTimeAgo
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -21,30 +24,39 @@ Bootstrap(app)
 app.app_context().push()
 db.init_app(app)
 Session(app)
+ckeditor = CKEditor(app)
 # login_manager = LoginManager()
 # login_manager.init_app(app)
 
 
-#TODO: Add user database
 #TODO: Add dropdown functionality to cards
 #TODO: Add card route and template
 #TODO: Add new buttons to sidebar
 #TODO: Figure out drag-and-drop
-#TODO: Add functionality to change card column
 #TODO: Add user login and show user boards in a dropdown in sidebar
-#TODO: Port theme function to the user and not the session
+#TODO: Change theme function to modify db entry
+#TODO: Add user mark to cards
+#TODO: Create boards
+#TODO: Create card db entry and column db entry and create relationships to the board entry
+
 
 class Board(db.Model):
     __tablename__="boards"
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(250), nullable = False)
-    tdd = db.Column(JSON, nullable = False)
+    tdd = db.Column(JSON)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # user = db.relationship("User", back_populates='boards')
 
-# class User(UserMixin, db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     email = db.Column(db.String(100), unique=True)
-#     password = db.Column(db.String(100))
-#     name = db.Column(db.String(1000))
+class User(UserMixin, db.Model):
+    __tablename__='users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(250), nullable=False, unique=True)
+    password = db.Column(db.String(500), nullable=False)
+    username = db.Column(db.String(1000), unique=True, nullable=False)
+    boards = db.relationship('Board', backref='user')
+    # False is Dark, True is Light
+    theme = db.Column(db.Boolean, default=True)
 
 # @login_manager.user_loader
 # def load_user(user_id):
@@ -94,12 +106,48 @@ def home():
 
 @app.route("/login")
 def login():
-    return render_template('login.html')
+    form = LoginForm()
+    if request.method == "POST":
+        user = db.session.query(User).filter_by(username=request.form["username"]).first()
+        if user:
+            if check_password_hash(user.password, request.form["password"]):
+                login_user(user)
+                flash('Logged in successfully.')
+
+                return redirect(url_for('home'))
+            else:
+                flash('Wrong password. Try again.')
+                return redirect(url_for('login'))
+        else:
+            flash('User does not exist.')
+            return redirect(url_for('login'))
+    return render_template("login.html", form=form)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
-    return render_template('register.html', form=form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            
+            user = db.session.query(User).filter_by(email=request.form["email"]).first()
+            if user:
+                flash("User already exists. Login instead.")
+                return redirect(url_for('login'))
+            else:
+                hashed_password = generate_password_hash(request.form["password"], "pbkdf2:sha256", 8)
+                new_user = User(
+                    username = request.form["username"],
+                    email = request.form["email"],
+                    password = hashed_password,
+                    theme = request.form['theme']
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                
+                login_user(new_user)
+                return redirect(url_for('home'))
+
+    return render_template("register.html", form=form)
 
 @app.route("/board/<int:id>", methods=["GET"])
 def board(id):
@@ -153,6 +201,12 @@ def previous(id, task):
     db.session.query(Board).filter_by(id=id).update({'tdd': data})
     db.session.commit()
     return redirect(url_for('board', id=1))
+
+@app.route("/createcard", methods=["GET", "POST"])
+def createcard():
+    form = CreateCardForm()
+    return render_template('create_card.html', form=form)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
