@@ -1,0 +1,17 @@
+.create-card {
+    max-width: 800px;
+}
+
+.card-name {
+    width: 400px;
+}
+
+.card-subtitle {
+    width: 400px;
+    height: 100px;
+}
+
+.card-content {
+    width: 600px;
+    height: 200px;
+}
