@@ -29,16 +29,15 @@ ckeditor = CKEditor(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
 #TODO: Add dropdown functionality to cards
 #TODO: Add card route and template
-#TODO: Add new buttons to sidebar
 #TODO: Figure out drag-and-drop
 #TODO: Add user login and show user boards in a dropdown in sidebar
 #TODO: Change theme function to modify db entry
 #TODO: Add user mark to cards
 #TODO: Create boards
-#TODO: Create card db entry and column db entry and create relationships to the board entry
+#TODO: Edit board names
+#TODO: Edit and Delete boards, columns and cards
 
 
 class Board(db.Model):
@@ -247,14 +246,22 @@ def createboard():
     form = CreateBoardForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            new_board = Board(
-                title = form.board_name.data,
-                user = current_user
-            )
-            db.session.add(new_board)
-            db.session.commit()
-            board_id = db.session.query(Board).filter_by(user=current_user, title=form.board_name.data).last().id
-            return redirect(url_for('addcol', id = board_id))
+            board_detect = db.session.query(Board).filter_by(title=request.form['title']).first()
+            if board_detect:
+                flash("A board already exists with that name. Try again")
+                return redirect(url_for('createboard'))
+            else:
+                new_board = Board(
+                    title = form.board_name.data,
+                    user = current_user
+                )
+                db.session.add(new_board)
+                db.session.commit()
+                board_id = db.session.query(Board).filter_by(user=current_user, title=form.board_name.data).all()[-1].id
+                return redirect(url_for('addcol', id = board_id))
+        else:
+            flash("The board name can't be longer than 50 characters")
+            return redirect(url_for('createboard'))
     else:
         return render_template('createboard.html', form=form)
     
