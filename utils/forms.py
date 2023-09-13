@@ -13,7 +13,7 @@ class LoginForm(FlaskForm):
     username = StringField(label='Username', validators=[DataRequired()])
     password = PasswordField(label='Password', validators=[DataRequired()])
     remember_me = BooleanField(label='Remember me')
-    submit = SubmitField(label="Register")
+    submit = SubmitField(label="Login")
 
 class CreateCardForm(FlaskForm):
     card_name = StringField(label='Card Name', validators=[DataRequired(), Length(max=50)])
