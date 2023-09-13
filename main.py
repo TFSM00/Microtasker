@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+import datetime as dt
 
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for, get_flashed_messages)
@@ -21,6 +21,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///micro.db'
 app.config['SECRET_KEY'] = 'key'    
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=5)
+
 Bootstrap(app)
 app.app_context().push()
 db.init_app(app)
@@ -49,6 +51,7 @@ class Board(db.Model):
     user = db.relationship("User", back_populates='boards')
     columns = db.relationship('Column', back_populates='board')
     cards = db.relationship('Card', back_populates='board')
+    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
 
 class User(UserMixin, db.Model):
     __tablename__='users'
@@ -61,6 +64,7 @@ class User(UserMixin, db.Model):
     cards = db.relationship('Card', back_populates='user')
     # False is Dark, True is Light
     theme = db.Column(db.String(10), default='light')
+    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
 
 class Column(db.Model):
     __tablename__='cols'
@@ -71,6 +75,7 @@ class Column(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='columns')
     cards = db.relationship('Card', back_populates='column')
+    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
 
 class Card(db.Model):
     __tablename__='cards'
@@ -84,6 +89,7 @@ class Card(db.Model):
     column = db.relationship("Column", back_populates='cards')
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='cards')
+    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -143,8 +149,6 @@ def login():
         if user:
             if check_password_hash(user.password, request.form["password"]):
                 login_user(user)
-                flash('Logged in successfully.')
-
                 return redirect(url_for('home'))
             else:
                 flash('Wrong password. Try again.')
@@ -185,11 +189,9 @@ def register():
 
 @app.route("/board/<int:id>", methods=["GET"])
 def board(id):
-    boardData = db.session.get(Board, id)
-    formattedTDD = taskTimeAgo(boardData.tdd)
-    keysTDD = list(formattedTDD.keys())
+    board_object = db.session.get(Board, id)
     if request.method == 'GET':
-        return render_template('board.html', tdd = formattedTDD, keys = keysTDD)
+        return render_template('board.html', board = board_object)
 
 @app.route("/delete/<int:id>/<task>", methods=["GET"])
 def delete(id, task):
@@ -245,6 +247,7 @@ def card(id):
 def createboard():
     form = CreateBoardForm()
     if request.method == "POST":
+        print(form.errors)
         if form.validate_on_submit():
             board_detect = db.session.query(Board).filter_by(title=request.form['title']).first()
             if board_detect:
@@ -252,12 +255,12 @@ def createboard():
                 return redirect(url_for('createboard'))
             else:
                 new_board = Board(
-                    title = form.board_name.data,
+                    title = form.title.data,
                     user = current_user
                 )
                 db.session.add(new_board)
                 db.session.commit()
-                board_id = db.session.query(Board).filter_by(user=current_user, title=form.board_name.data).all()[-1].id
+                board_id = db.session.query(Board).filter_by(user=current_user, title=form.title.data).all()[-1].id
                 return redirect(url_for('addcol', id = board_id))
         else:
             flash("The board name can't be longer than 50 characters")
@@ -270,10 +273,11 @@ def addcol(id):
     form = AddColForm()
     if request.method == "POST":
         pass
+        # Add DB interact
+        # Add button to go back to board
     else:
-        board_cols = db.session.get(Board, id).columns
-        print(board_cols)
-        return render_template('addcolumn.html', form = form, cols = board.columns)
+        board_object = db.session.get(Board, id)
+        return render_template('addcolumn.html', id = board_object.id, form = form, cols = board_object.columns)
     
 
 
