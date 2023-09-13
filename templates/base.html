@@ -57,13 +57,13 @@ Every Sidebar Link Icon must have "me-2" in the class
           Home
         </a>
       </li>
+      {% if current_user.is_authenticated %}
       <li class="nav-item">
         <a href="{{ url_for('board', id=1) }}" class="nav-link {{'active' if request.path == '/board'}}" aria-current="page">
           <i class="bi bi-clipboard-data me-2"></i>
           Board
         </a>
       </li>
-      {% if current_user.is_authenticated %}
       {% else %}
       <li class="nav-item">
         <a href="{{ url_for('login') }}" class="nav-link {{'active' if request.path == '/login'}}" aria-current="page">
