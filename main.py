@@ -136,7 +136,7 @@ def theme():
 def home():
     return render_template('index.html')
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if request.method == "POST":
