@@ -8,10 +8,21 @@ html {
     color: white; /* Example text color */
   }
 
+
 .board-col {
   height: 100vh;
 }
-  
+
+.btn-toggle-nav a {
+  padding: .1875rem .5rem;
+  margin-top: .125rem;
+  margin-left: 1.25rem;
+}
+
+.btn-toggle-nav a:hover,
+.btn-toggle-nav a:focus {
+  background-color: var(--bs-tertiary-bg);
+}
 
 /* .rounded-pill {
   min-width: 20px;

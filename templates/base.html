@@ -59,10 +59,19 @@ Every Sidebar Link Icon must have "me-2" in the class
       </li>
       {% if current_user.is_authenticated %}
       <li class="nav-item">
-        <a href="{{ url_for('board', id=1) }}" class="nav-link {{'active' if request.path == '/board'}}" aria-current="page">
-          <i class="bi bi-clipboard-data me-2"></i>
-          Board
-        </a>
+          <a href="#" class="nav-link" id="dropdown-1" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+            <i class="bi bi-house me-2"></i>
+            Boards
+          </a>
+
+          <div class="collapse" id="dashboard-collapse" style="">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Overview</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Weekly</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Monthly</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Annually</a></li>
+            </ul>
+          </div>
       </li>
       {% else %}
       <li class="nav-item">
@@ -108,25 +117,9 @@ Every Sidebar Link Icon must have "me-2" in the class
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="/static/js/base.js"></script>
+  <script src="/static/js/collapse.js"></script>
   {% block script %}
-  <script>
-    if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-      document.getElementById('color-theme').setAttribute('class', "bi bi-moon-stars-fill")
-    } else {
-      document.getElementById('color-theme').setAttribute('class', "bi bi-brightness-high-fill")
-    }
-    document.getElementById('btnSwitch').addEventListener('click',()=>{
-    if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-        document.documentElement.setAttribute('data-bs-theme','light')
-        document.getElementById('color-theme').setAttribute('class', "bi bi-brightness-high-fill")
-
-    }
-    else {
-        document.documentElement.setAttribute('data-bs-theme','dark')
-        document.getElementById('color-theme').setAttribute('class', "bi bi-moon-stars-fill")
-    }
-})
-  </script>
   {% endblock %}
 </body>
 {% endblock %}
