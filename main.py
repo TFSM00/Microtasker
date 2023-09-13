@@ -161,9 +161,13 @@ def register():
     if request.method == 'POST':
         if form.validate_on_submit():
             user = db.session.query(User).filter_by(email=request.form["email"]).first()
+            user_check = db.session.query(User).filter_by(username=request.form['username']).first()
             if user:
-                flash("User already exists. Login instead.")
+                flash("Email is already registered. Login instead.")
                 return redirect(url_for('login'))
+            elif user_check:
+                flash("Username is taken. Use a different one.")
+                return redirect(url_for('register'))
             else:
                 hashed_password = generate_password_hash(request.form["password"], "pbkdf2:sha256", 8)
                 new_user = User(

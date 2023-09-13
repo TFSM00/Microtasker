@@ -12,6 +12,13 @@
     <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
     <h1 class="h3 mb-3 fw-normal">Register Account</h1>
     {{ form.csrf_token }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="margin: auto; color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="form-floating">
         {{ form.username(class_='form-control', type_='text', size=40) }}
         {{ form.username.label }}
