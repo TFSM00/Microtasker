@@ -22,7 +22,7 @@ class CreateCardForm(FlaskForm):
     submit = SubmitField(label="Add Task")
 
 class CreateBoardForm(FlaskForm):
-    board_name = StringField(label='Board Name', validators=[DataRequired(), Length(max=50)])
+    title = StringField(label='Board Name', validators=[DataRequired(), Length(max=50)])
     submit = SubmitField(label='Create Board')
 
 class AddColForm(FlaskForm):
