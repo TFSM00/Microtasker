@@ -67,7 +67,7 @@ Every Sidebar Link Icon must have "me-2" in the class
           <div class="collapse" id="dashboard-collapse" style="">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               {% for board in current_user.boards %}
-                <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">{{ board.title }}</a></li>
+                <li><a href="{{ url_for('board', id=board.id)}}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">{{ board.title }}</a></li>
               {% endfor %}
               <li><a href="{{ url_for('createboard') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Create Board</a></li>
             </ul>
