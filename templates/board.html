@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+     <link rel="stylesheet" href="/static/css/board.css">
+{% endblock %}
+
 {% block content %}
 {{ super() }}
 
 <div class="container">
-    <div class="row">
+    <div class="row board-parent d-flex flex-nowrap">
         {% for col in board.columns %}
-        <div class="col-3 border board-col">
+        <div class="col-3 border board-col board-child">
             <h4 class="mt-2 mb-4 text-center">{{ col.column_name }}</h4>
             {% for card in col.cards %}
                 <div class="card w-100 mb-3">
@@ -65,8 +70,8 @@
                 <div class="card-body">
                     <div class="d-grid">
                         <a href="{{ url_for('addcol', id=board.id) }}" class="text-decoration-none">
-                            <div class="row row-cols-2 d-flex justify-content-between align-items-center">
-                                <h5 class="col-auto card-title m-0">Create New Card</h5>
+                            <div class="row row-cols-2 d-flex justify-content-center align-items-center">
+                                <h5 class="col-auto card-title m-0 pr-0">Create New Card</h5>
                                 <svg class="col-auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-plus" viewBox="0 0 16 16">
                                     <path d="M8.5 6a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V10a.5.5 0 0 0 1 0V8.5H10a.5.5 0 0 0 0-1H8.5V6z"></path>
                                     <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"></path>
@@ -78,13 +83,13 @@
             </div>
         </div>
         {% endfor %}
-        <div class="col-3">
+        <div class="col-3 board-child">
         <div class="card m-2" style="max-width: 20vw;">
             <div class="card-body">
                 <div class="d-grid">
                     <a href="{{ url_for('addcol', id=board.id) }}" class="text-decoration-none">
-                        <div class="row row-cols-2 d-flex justify-content-between align-items-center">
-                            <h5 class="col-auto card-title m-0">Create New Column</h5>
+                        <div class="row row-cols-2 d-flex justify-content-center align-items-center">
+                            <h5 class="col-auto card-title m-0 pr-0">Create New Column</h5>
                             <svg class="col-auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-plus" viewBox="0 0 16 16">
                                 <path d="M8.5 6a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V10a.5.5 0 0 0 1 0V8.5H10a.5.5 0 0 0 0-1H8.5V6z"></path>
                                 <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"></path>
@@ -102,3 +107,7 @@
 
 
 {% endblock %}
+
+{% block script %}
+<script src="/static/js/board.js"></script>
+{% endblock%}

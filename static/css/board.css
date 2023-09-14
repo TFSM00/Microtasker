@@ -1,0 +1,16 @@
+.board-parent {
+    min-width: 300px;
+}
+
+.board-child {
+    min-width: 300px;
+    flex-basis: 0px;
+    flex-grow: 1;
+}
+
+body {
+    margin: 0px;
+    height: 100vh;
+}
+
+
