@@ -21,6 +21,12 @@ class CreateCardForm(FlaskForm):
     card_content = TextAreaField(label="Card Content", validators=[DataRequired()])
     submit = SubmitField(label="Add Card")
 
+class EditCardForm(CreateCardForm):
+    card_name = CreateCardForm.card_name
+    card_subtitle = CreateCardForm.card_subtitle
+    card_content = CreateCardForm.card_content
+    submit = SubmitField(label="Edit Card")
+
 class CreateBoardForm(FlaskForm):
     title = StringField(label='Board Name', validators=[DataRequired(), Length(max=50)])
     submit = SubmitField(label='Create Board')
