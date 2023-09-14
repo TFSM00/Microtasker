@@ -31,16 +31,14 @@ ckeditor = CKEditor(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-#TODO: Add dropdown functionality to cards
 #TODO: Add card route and template
 #TODO: Figure out drag-and-drop
-#TODO: Add user login and show user boards in a dropdown in sidebar
 #TODO: Change theme function to modify db entry
 #TODO: Add user mark to cards
-#TODO: Create boards
 #TODO: Edit board names
 #TODO: Edit and Delete boards, columns and cards
 #TODO: Add remember me function
+#TODO: Add card modal
 
 
 class Board(db.Model):
@@ -241,8 +239,32 @@ def previouscol(id, task):
 
 @app.route("/card/<int:id>", methods=["GET", "POST"])
 def card(id):
+    print(id)
     form = CreateCardForm()
     return render_template('card.html', form=form)
+
+@app.route("/editcard/<int:col_id>", methods=["GET", "POST"])
+def editcard(id):
+    pass
+
+@app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
+def newcard(col_id):
+    form = CreateCardForm()
+    col_object = db.session.get(Column, col_id)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            newCard = Card(
+                card_name = form.card_name.data,
+                card_subtitle = form.card_subtitle.data,
+                card_content = form.card_content.data,
+                user = current_user,
+                column = col_object
+            )
+            db.session.add(newCard)
+            db.session.commit()
+            return redirect(url_for('board', id=col_object.board_id))
+    else:
+        return render_template('createcard.html', form=form, col_id=col_id, col_name=col_object.column_name )
 
 @app.route("/createboard", methods=["GET", "POST"])
 def createboard():
