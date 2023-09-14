@@ -12,6 +12,13 @@
     <h1 class="h3 mb-3 fw-normal">Add Column</h1>
 
     {{ form.csrf_token }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="margin: auto; color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="form-floating">
         {{ form.col_name(class_='form-control', type_='text', size=40) }}
         {{ form.col_name.label }}
