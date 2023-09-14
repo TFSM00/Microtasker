@@ -192,16 +192,12 @@ def board(id):
     if request.method == 'GET':
         return render_template('board.html', board = board_object)
 
-@app.route("/delete/<int:id>/<task>", methods=["GET"])
-def delete(id, task):
-    boardData = db.session.get(Board, id)
-    data = boardData.tdd.copy()
-    for col in data:
-        if task in data[col]:
-            del data[col][task]
-    db.session.query(Board).filter_by(id=id).update({'tdd': data})
+@app.route("/delete/<int:board_id>/<int:card_id>", methods=["GET"])
+def delete(card_id, board_id):
+    card_data = db.session.get(Card, card_id)
+    db.session.delete(card_data)
     db.session.commit()
-    return redirect(url_for('board', id=1))
+    return redirect(url_for('board', id=board_id))
 
 @app.route("/next/<int:id>/<task>")
 def nextcol(id, task):

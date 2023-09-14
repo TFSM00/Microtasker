@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="col-auto d-flex flex-column justify-content-between align-item gap-1">
                                     <button type="submit" class="btn btn-warning px-1 py-1 lh-1">Edit</button>
-                                    <a href="{{ url_for('delete', id=1, task=task) }}" class="text-decoration-none">
+                                    <a href="{{ url_for('delete', board_id=board.id ,card_id=card.id) }}" class="text-decoration-none">
                                         <button class="btn btn-danger px-1 py-1 lh-1">Delete</button>
                                     </a>
                                     {% if col==board.columns[0] %}
