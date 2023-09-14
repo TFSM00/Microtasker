@@ -13,7 +13,7 @@ from sqlalchemy.orm.session import close_all_sessions
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_session import Session
-from utils.forms import CreateCardForm, LoginForm, RegisterForm, CreateBoardForm, AddColForm
+from utils.forms import CreateCardForm, LoginForm, RegisterForm, CreateBoardForm, AddColForm, EditCardForm
 from utils.funcs import taskTimeAgo
 
 db = SQLAlchemy()
@@ -261,13 +261,24 @@ def card(id):
 
 @app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
 def editcard(card_id):
-    form = CreateCardForm()
     card_data = db.session.get(Card, card_id)
+    form = EditCardForm(
+            card_name = card_data.card_name,
+            card_subtitle = card_data.card_subtitle,
+            card_content = card_data.card_content)
     col_data = db.session.get(Column, card_data.column_id)
     if request.method == "POST":
-        pass
+        if form.validate_on_submit():
+            card_data.card_name = form.card_name.data
+            card_data.card_subtitle = form.card_subtitle.data
+            card_data.card_content = form.card_content.data
+            card_data.user = current_user
+            card_data.column = col_data
+            card_data.board = db.session.get(Board, col_data.board_id)
+            db.session.commit()
+            return redirect(url_for('board', id=col_data.board_id))
     else:
-        return render_template('editcard.html', col=col_data, card=card_data)
+        return render_template('editcard.html', form=form, col=col_data, card=card_data)
     
 @app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
 def newcard(col_id):
