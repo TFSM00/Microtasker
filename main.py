@@ -9,6 +9,7 @@ from flask_login import (LoginManager, UserMixin, current_user, login_required,
 from flask_sqlalchemy import SQLAlchemy
 import json
 from sqlalchemy.dialects.sqlite import JSON
+from sqlalchemy.orm.session import close_all_sessions
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_session import Session
@@ -36,10 +37,9 @@ login_manager.init_app(app)
 #TODO: Change theme function to modify db entry
 #TODO: Add user mark to cards
 #TODO: Edit board names
-#TODO: Edit and Delete boards, columns and cards
+#TODO: Edit and Delete boards, columns
 #TODO: Add remember me function
 #TODO: Add card modal
-
 
 class Board(db.Model):
     __tablename__="boards"
@@ -51,6 +51,7 @@ class Board(db.Model):
     columns = db.relationship('Column', back_populates='board')
     cards = db.relationship('Card', back_populates='board')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
+    last_edited = db.Column(db.DateTime, nullable=True)
 
 class User(UserMixin, db.Model):
     __tablename__='users'
@@ -75,6 +76,7 @@ class Column(db.Model):
     board = db.relationship("Board", back_populates='columns')
     cards = db.relationship('Card', back_populates='column')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
+    last_edited = db.Column(db.DateTime, nullable=True)
 
 class Card(db.Model):
     __tablename__='cards'
@@ -89,6 +91,7 @@ class Card(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='cards')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
+    last_edited = db.Column(db.DateTime, nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -217,6 +220,7 @@ def nextcol(card_id, board_id):
                 card_content = card_data.card_content,
                 user = card_data.user,
                 column = next_col,
+                board = board_data,
                 date_created = card_data.date_created
             )
         db.session.add(new_card)
@@ -241,6 +245,7 @@ def previouscol(card_id, board_id):
                 card_content = card_data.card_content,
                 user = card_data.user,
                 column = prev_col,
+                board = board_data,
                 date_created = card_data.date_created
             )
         db.session.add(new_card)
@@ -254,10 +259,16 @@ def card(id):
     form = CreateCardForm()
     return render_template('card.html', form=form)
 
-@app.route("/editcard/<int:col_id>", methods=["GET", "POST"])
-def editcard(id):
-    pass
-
+@app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
+def editcard(card_id):
+    form = CreateCardForm()
+    card_data = db.session.get(Card, card_id)
+    col_data = db.session.get(Column, card_data.column_id)
+    if request.method == "POST":
+        pass
+    else:
+        return render_template('editcard.html', col=col_data, card=card_data)
+    
 @app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
 def newcard(col_id):
     form = CreateCardForm()
@@ -269,7 +280,8 @@ def newcard(col_id):
                 card_subtitle = form.card_subtitle.data,
                 card_content = form.card_content.data,
                 user = current_user,
-                column = col_object
+                column = col_object,
+                board = db.session.get(Board, col_object.board)
             )
             db.session.add(newCard)
             db.session.commit()
@@ -328,10 +340,6 @@ def addcol(id):
         board_object = db.session.get(Board, id)
         return render_template('addcolumn.html', id = board_object.id, form = form, cols = board_object.columns)
     
-
-
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
