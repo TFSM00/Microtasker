@@ -1,3 +1,15 @@
+.row {
+    display: table;
+}
+
+.col-3 {
+    display: table-cell;
+}
+
+.container {
+    min-height: 100%;
+}
+
 .board-parent {
     min-width: 300px;
 }

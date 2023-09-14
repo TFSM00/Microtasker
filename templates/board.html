@@ -8,10 +8,10 @@
 {% block content %}
 {{ super() }}
 
-<div class="container">
-    <div class="row board-parent d-flex flex-nowrap">
+<div class="container vh-100 overflow-scroll">
+    <div class="row board-parent d-flex flex-nowrap vh-100">
         {% for col in board.columns %}
-        <div class="col-3 border board-col board-child">
+        <div class="col-3 whole border board-col board-child vh-100">
             <h4 class="mt-2 mb-4 text-center">{{ col.column_name }}</h4>
             {% for card in col.cards %}
                 <div class="card w-100 mb-3">
@@ -69,7 +69,7 @@
             <div class="card w-100 mb-3">
                 <div class="card-body">
                     <div class="d-grid">
-                        <a href="{{ url_for('addcol', id=board.id) }}" class="text-decoration-none">
+                        <a href="{{ url_for('newcard', col_id=col.id) }}" class="text-decoration-none">
                             <div class="row row-cols-2 d-flex justify-content-center align-items-center">
                                 <h5 class="col-auto card-title m-0 pr-0">Create New Card</h5>
                                 <svg class="col-auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-plus" viewBox="0 0 16 16">
@@ -109,5 +109,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="/static/js/board.js"></script>
+{# <script src="/static/js/board.js"></script> #}
 {% endblock%}

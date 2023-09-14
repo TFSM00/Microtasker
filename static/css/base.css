@@ -1,9 +1,22 @@
 html {
   font-size: 14px;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
-body {
-  overflow-y: hidden;
+::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
 .sidebar {
@@ -12,9 +25,10 @@ body {
     color: white; /* Example text color */
 }
 
-
 .board-col {
   height: 100vh;
+  overflow: auto;
+  min-height: 100vh;
 }
 
 .btn-toggle-nav a {
