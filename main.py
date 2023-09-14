@@ -40,6 +40,7 @@ login_manager.init_app(app)
 #TODO: Create boards
 #TODO: Edit board names
 #TODO: Edit and Delete boards, columns and cards
+#TODO: Add remember me function
 
 
 class Board(db.Model):
@@ -272,9 +273,24 @@ def createboard():
 def addcol(id):
     form = AddColForm()
     if request.method == "POST":
-        pass
-        # Add DB interact
-        # Add button to go back to board
+        if form.validate_on_submit():
+            col_check = db.session.query(Column).filter_by(column_name=form.col_name.data).first()
+            if col_check:
+                flash("A column with this name already exists in this board. Try again")
+                return redirect(url_for('addcol', id=id))
+            else:
+                board_object = db.session.get(Board, id)
+                newCol = Column(
+                    column_name = form.col_name.data,
+                    user = current_user,
+                    board = board_object
+                )
+                db.session.add(newCol)
+                db.session.commit()
+                return redirect(url_for('addcol', id=id))
+        else:
+            flash("The column name can't have more than 50 characters")
+            return redirect(url_for('addcol', id=id))
     else:
         board_object = db.session.get(Board, id)
         return render_template('addcolumn.html', id = board_object.id, form = form, cols = board_object.columns)
