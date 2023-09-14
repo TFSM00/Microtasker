@@ -192,46 +192,61 @@ def board(id):
     if request.method == 'GET':
         return render_template('board.html', board = board_object)
 
-@app.route("/delete/<int:board_id>/<int:card_id>", methods=["GET"])
+@app.route("/delete/<int:board_id>/<int:card_id>")
 def delete(card_id, board_id):
     card_data = db.session.get(Card, card_id)
     db.session.delete(card_data)
     db.session.commit()
     return redirect(url_for('board', id=board_id))
 
-@app.route("/next/<int:id>/<task>")
-def nextcol(id, task):
-    boardData = db.session.get(Board, id)
-    data = boardData.tdd.copy()
-    for index, col in enumerate(data):
-        if task in data[col]:
-            try:
-                next_col = list(data.keys())[index + 1]
-                data[next_col][task] = data[col][task]
-                del data[col][task]
-            except IndexError:
-                pass
-            break
-    db.session.query(Board).filter_by(id=id).update({'tdd': data})
-    db.session.commit()
-    return redirect(url_for('board', id=1))
+@app.route("/next/<int:board_id>/<int:card_id>")
+def nextcol(card_id, board_id):
+    board_data = db.session.get(Board, board_id)
+    card_data = db.session.get(Card, card_id)
+    try:
+        col = db.session.get(Column, card_data.column_id)
+        col_index = board_data.columns.index(col)
+        next_col = board_data.columns[col_index + 1]
+    except IndexError:
+        pass
+    else:
+        
+        new_card = Card(
+                card_name = card_data.card_name,
+                card_subtitle = card_data.card_subtitle,
+                card_content = card_data.card_content,
+                user = card_data.user,
+                column = next_col,
+                date_created = card_data.date_created
+            )
+        db.session.add(new_card)
+        db.session.delete(card_data)
+        db.session.commit()
+    return redirect(url_for('board', id=board_id))
 
-@app.route("/previous/<int:id>/<task>")
-def previouscol(id, task):
-    boardData = db.session.get(Board, id)
-    data = boardData.tdd.copy()
-    for index, col in enumerate(data):
-        if task in data[col]:
-            try:
-                prev_col = list(data.keys())[index - 1]
-                data[prev_col][task] = data[col][task]
-                del data[col][task]
-            except IndexError:
-                pass
-            break
-    db.session.query(Board).filter_by(id=id).update({'tdd': data})
-    db.session.commit()
-    return redirect(url_for('board', id=1))
+@app.route("/previous/<int:board_id>/<int:card_id>")
+def previouscol(card_id, board_id):
+    board_data = db.session.get(Board, board_id)
+    card_data = db.session.get(Card, card_id)
+    try:
+        col = db.session.get(Column, card_data.column_id)
+        col_index = board_data.columns.index(col)
+        prev_col = board_data.columns[col_index - 1]
+    except IndexError:
+        pass
+    else:
+        new_card = Card(
+                card_name = card_data.card_name,
+                card_subtitle = card_data.card_subtitle,
+                card_content = card_data.card_content,
+                user = card_data.user,
+                column = prev_col,
+                date_created = card_data.date_created
+            )
+        db.session.add(new_card)
+        db.session.delete(card_data)
+        db.session.commit()
+    return redirect(url_for('board', id=board_id))
 
 @app.route("/card/<int:id>", methods=["GET", "POST"])
 def card(id):
