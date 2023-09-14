@@ -274,12 +274,12 @@ def addcol(id):
     form = AddColForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            col_check = db.session.query(Column).filter_by(column_name=form.col_name.data).first()
+            board_object = db.session.get(Board, id)
+            col_check = db.session.query(Column).filter_by(column_name=form.col_name.data, board=board_object).first()
             if col_check:
                 flash("A column with this name already exists in this board. Try again")
                 return redirect(url_for('addcol', id=id))
             else:
-                board_object = db.session.get(Board, id)
                 newCol = Column(
                     column_name = form.col_name.data,
                     user = current_user,
