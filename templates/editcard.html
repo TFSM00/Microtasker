@@ -7,7 +7,7 @@
 
 {% block main %}
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-  <form class="create-card d-column align-center" action="{{ url_for('newcard', col_id=col_id) }}" method="post" novalidate>
+  <form class="create-card d-column align-center" action="{{ url_for('editcard', card_id=card.id) }}" method="post" novalidate>
     <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
     <h1 class="h3 mb-3 fw-normal">Edit Card</h1>
     <h3 class="h5 mb-3 fw-normal">Column: {{ col.column_name }}</h3>
