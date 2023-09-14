@@ -24,7 +24,9 @@
                                     <small>{{ card.date_created }}</small>
                                 </div>
                                 <div class="col-auto d-flex flex-column justify-content-between align-item gap-1">
-                                    <button type="submit" class="btn btn-warning px-1 py-1 lh-1">Edit</button>
+                                    <a href="{{ url_for('editcard' ,card_id=card.id) }}" class="text-decoration-none">
+                                        <button class="btn btn-warning px-1 py-1 lh-1 w-100">Edit</button>
+                                    </a>
                                     <a href="{{ url_for('delete', board_id=board.id ,card_id=card.id) }}" class="text-decoration-none">
                                         <button class="btn btn-danger px-1 py-1 lh-1">Delete</button>
                                     </a>
