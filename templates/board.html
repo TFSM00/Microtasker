@@ -8,12 +8,17 @@
 {% block content %}
 {{ super() }}
 
-<div class="container vh-100 overflow-scroll">
-    <div class="row board-parent d-flex flex-nowrap vh-100">
+{# Card Modal #}
+{% include "modals/board-card-modal.html" %}
+{#  #}
+
+<div class="container vh-100 ">
+    <div class="row board-parent d-flex flex-nowrap vh-100 overflow-scroll">
         {% for col in board.columns %}
-        <div class="col-3 whole border board-col board-child vh-100">
+        <div class="col-3 whole border board-col board-child vh-100" id="{{ col.id }}">
             <h4 class="mt-2 mb-4 text-center">{{ col.column_name }}</h4>
             {% for card in col.cards %}
+            <a data-bs-toggle="modal" data-bs-target="#card-modal">
                 <div class="card w-100 mb-3">
                     <div class="card-body">
                         <div class="d-grid">
@@ -67,6 +72,7 @@
                         </div>
                     </div>
                 </div>
+            </a>
             {% endfor %}
             <div class="card w-100 mb-3">
                 <div class="card-body">
