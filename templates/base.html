@@ -52,36 +52,49 @@ Every Sidebar Link Icon must have "me-2" in the class
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="{{ url_for('home') }}" class="nav-link {{'active' if request.path == '/'}}" aria-current="page">
-          <i class="bi bi-house me-2"></i>
-          Home
+        <a href="{{ url_for('home') }}" class="nav-link {#'active' if request.path == '/'#}" aria-current="page">
+          <span class="fs-6 badge rounded-pill bg-primary">
+            <i class="bi bi-house me-2"></i>
+            Home
+          </span>
         </a>
       </li>
       {% if current_user.is_authenticated %}
       <li class="nav-item">
           <a href="#" class="nav-link" id="dropdown-1" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+            <span class="fs-6 badge rounded-pill bg-primary">
             <i class="bi bi-house me-2"></i>
             Boards
+          </span>
           </a>
 
           <div class="collapse" id="dashboard-collapse" style="">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               {% for board in current_user.boards %}
-                <li><a href="{{ url_for('board', id=board.id)}}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">{{ board.title }}</a></li>
+                <li>
+                    <a href="{{ url_for('board', id=board.id)}}" class="d-inline-flex text-decoration-none rounded">
+                  <span class="fs-6 badge rounded-pill bg-info">{{ board.title }}</span>
+                    </a>
+                </li>
+                
               {% endfor %}
-              <li><a href="{{ url_for('createboard') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Create Board</a></li>
+              <li>
+                    <a href="{{ url_for('createboard') }}" class="d-inline-flex text-decoration-none rounded">
+                  <span class="fs-6 badge rounded-pill bg-success">Create Board</span>
+                    </a>
+                </li>
             </ul>
           </div>
       </li>
       {% else %}
       <li class="nav-item">
-        <a href="{{ url_for('login') }}" class="nav-link {{'active' if request.path == '/login'}}" aria-current="page">
+        <a href="{{ url_for('login') }}" class="nav-link" aria-current="page">
           <i class="bi bi-box-arrow-in-right me-2"></i>
           Login
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url_for('register') }}" class="nav-link {{'active' if request.path == '/register'}}" aria-current="page">
+        <a href="{{ url_for('register') }}" class="nav-link" aria-current="page">
           <i class="bi bi-r-square me-2"></i>
           Register
         </a>
@@ -109,7 +122,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 
   </div>
       {% block main %}
-      <main class="flex-grow-1 whole">
+      <main class="flex-grow-1 whole overflow-auto">
           {% block content%}
           {% endblock %}
       </main>
