@@ -40,12 +40,13 @@ login_manager.init_app(app)
 #TODO: Edit and Delete boards, columns
 #TODO: Add remember me function
 #TODO: Add card modal
+#TODO: Add color to column top
+#TODO: Add color picker to column form and color entry to db
 
 class Board(db.Model):
     __tablename__="boards"
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(250), nullable = False)
-    # tdd = db.Column(JSON)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='boards')
     columns = db.relationship('Column', back_populates='board')
@@ -292,7 +293,7 @@ def newcard(col_id):
                 card_content = form.card_content.data,
                 user = current_user,
                 column = col_object,
-                board = db.session.get(Board, col_object.board)
+                board = db.session.get(Board, col_object.board_id)
             )
             db.session.add(newCard)
             db.session.commit()
