@@ -1,7 +1,6 @@
 html {
   font-size: 14px;
   overflow-y: hidden;
-  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -27,7 +26,6 @@ html {
 
 .board-col {
   height: 100vh;
-  overflow: auto;
   min-height: 100vh;
 }
 
