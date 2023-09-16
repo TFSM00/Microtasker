@@ -353,5 +353,27 @@ def addcol(id):
         return render_template('addcolumn.html', id = board_object.id, form = form, cols = board_object.columns)
     
 
+@app.route('/update-position', methods=["POST"])
+def update_position():
+    col_id = request.form['col_id']
+    card_id = request.form['card_id']
+    col_data = db.session.get(Column, col_id)
+    board_data = col_data.board
+    card_data = db.session.get(Card, card_id)
+
+    new_card = Card(
+            card_name = card_data.card_name,
+            card_subtitle = card_data.card_subtitle,
+            card_content = card_data.card_content,
+            user = card_data.user,
+            column = col_data,
+            board = board_data,
+            date_created = card_data.date_created
+        )
+    db.session.add(new_card)
+    db.session.delete(card_data)
+    db.session.commit()
+    return ('', 204)
+
 if __name__ == "__main__":
     app.run(debug=True)
