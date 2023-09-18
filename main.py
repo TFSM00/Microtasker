@@ -1,5 +1,8 @@
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for, abort
 from flask_login import current_user, login_required, login_user, logout_user
+
+from functools import wraps
+
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import create_app
@@ -26,6 +29,18 @@ app, db, login_manager = create_app()
 def load_user(user_id):
     return db.session.get(User, user_id)
 
+def admin_only(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            if current_user.id == 1:
+                return func(*args, **kwargs)
+            else:
+                return abort(403)
+        except AttributeError:
+            return abort(403)
+    return wrapper
+
 # db.drop_all()
 # db.create_all()
 
@@ -35,9 +50,11 @@ def theme():
     Receives a theme string and a path, saves the theme to a cookie
     and redirects back to the page from the post request is made.
     """
+    if current_user.is_authenticated:
+        current_user.theme = request.args.get('theme')
+        db.session.commit()
 
     session['theme'] = request.args.get('theme')
-    
     path = request.args.get('path')
     return redirect(path)
 
@@ -62,6 +79,11 @@ def login():
             flash('User does not exist.')
             return redirect(url_for('login'))
     return render_template("login.html", form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -93,75 +115,29 @@ def register():
     return render_template("register.html", form=form)
 
 @app.route("/board/<int:id>", methods=["GET"])
+@login_required
 def board(id):
     board_object = db.session.get(Board, id)
     if request.method == 'GET':
         return render_template('board.html', board = board_object)
 
 @app.route("/delete/<int:board_id>/<int:card_id>")
+@login_required
 def delete(card_id, board_id):
     card_data = db.session.get(Card, card_id)
     db.session.delete(card_data)
     db.session.commit()
     return redirect(url_for('board', id=board_id))
 
-@app.route("/next/<int:board_id>/<int:card_id>")
-def nextcol(card_id, board_id):
-    board_data = db.session.get(Board, board_id)
-    card_data = db.session.get(Card, card_id)
-    try:
-        col = db.session.get(Column, card_data.column_id)
-        col_index = board_data.columns.index(col)
-        next_col = board_data.columns[col_index + 1]
-    except IndexError:
-        pass
-    else: 
-        new_card = Card(
-                card_name = card_data.card_name,
-                card_subtitle = card_data.card_subtitle,
-                card_content = card_data.card_content,
-                user = card_data.user,
-                column = next_col,
-                board = board_data,
-                date_created = card_data.date_created
-            )
-        db.session.add(new_card)
-        db.session.delete(card_data)
-        db.session.commit()
-    return redirect(url_for('board', id=board_id))
-
-@app.route("/previous/<int:board_id>/<int:card_id>")
-def previouscol(card_id, board_id):
-    board_data = db.session.get(Board, board_id)
-    card_data = db.session.get(Card, card_id)
-    try:
-        col = db.session.get(Column, card_data.column_id)
-        col_index = board_data.columns.index(col)
-        prev_col = board_data.columns[col_index - 1]
-    except IndexError:
-        pass
-    else:
-        new_card = Card(
-                card_name = card_data.card_name,
-                card_subtitle = card_data.card_subtitle,
-                card_content = card_data.card_content,
-                user = card_data.user,
-                column = prev_col,
-                board = board_data,
-                date_created = card_data.date_created
-            )
-        db.session.add(new_card)
-        db.session.delete(card_data)
-        db.session.commit()
-    return redirect(url_for('board', id=board_id))
-
 @app.route("/card/<int:id>", methods=["GET", "POST"])
+@login_required
 def card(id):
     print(id)
     form = CreateCardForm()
     return render_template('card.html', form=form)
 
 @app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
+@login_required
 def editcard(card_id):
     card_data = db.session.get(Card, card_id)
     form = EditCardForm(
@@ -183,6 +159,7 @@ def editcard(card_id):
         return render_template('editcard.html', form=form, col=col_data, card=card_data)
     
 @app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
+@login_required
 def newcard(col_id):
     form = CreateCardForm()
     col_object = db.session.get(Column, col_id)
@@ -203,6 +180,7 @@ def newcard(col_id):
         return render_template('createcard.html', form=form, col_id=col_id, col_name=col_object.column_name )
 
 @app.route("/createboard", methods=["GET", "POST"])
+@login_required
 def createboard():
     form = CreateBoardForm()
     if request.method == "POST":
@@ -228,6 +206,7 @@ def createboard():
         return render_template('createboard.html', form=form)
     
 @app.route("/addcol/<int:id>", methods=["GET", "POST"])
+@login_required
 def addcol(id):
     form = AddColForm()
     if request.method == "POST":
@@ -255,6 +234,7 @@ def addcol(id):
     
 
 @app.route('/update-position', methods=["POST"])
+@login_required
 def update_position():
     col_id = request.form['col_id']
     card_id = request.form['card_id']
