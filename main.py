@@ -1,36 +1,13 @@
-import datetime as dt
-
-from flask import (Flask, flash, make_response, redirect, render_template,
-                   request, session, url_for, get_flashed_messages)
-from flask_ckeditor import CKEditor
-from flask_bootstrap import Bootstrap
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
-from flask_sqlalchemy import SQLAlchemy
-import json
-from sqlalchemy.dialects.sqlite import JSON
-from sqlalchemy.orm.session import close_all_sessions
+from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flask_session import Session
-from utils.forms import CreateCardForm, LoginForm, RegisterForm, CreateBoardForm, AddColForm, EditCardForm
-from utils.funcs import taskTimeAgo
+from app import create_app
+from models import Board, Card, Column, User
+from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
+                         EditCardForm, LoginForm, RegisterForm)
 
-db = SQLAlchemy()
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///micro.db'
-app.config['SECRET_KEY'] = 'key'    
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=5)
-
-Bootstrap(app)
-app.app_context().push()
-db.init_app(app)
-Session(app)
-ckeditor = CKEditor(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
+app, db, login_manager = create_app()
 
 #TODO: Add card route and template
 #TODO: Figure out drag-and-drop
@@ -43,56 +20,7 @@ login_manager.init_app(app)
 #TODO: Add color to column top
 #TODO: Add color picker to column form and color entry to db
 
-class Board(db.Model):
-    __tablename__="boards"
-    id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(250), nullable = False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates='boards')
-    columns = db.relationship('Column', back_populates='board')
-    cards = db.relationship('Card', back_populates='board')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
-    last_edited = db.Column(db.DateTime, nullable=True)
 
-class User(UserMixin, db.Model):
-    __tablename__='users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(250), nullable=False, unique=True)
-    password = db.Column(db.String(500), nullable=False)
-    username = db.Column(db.String(1000), unique=True, nullable=False)
-    boards = db.relationship('Board', back_populates='user')
-    columns = db.relationship('Column', back_populates='user')
-    cards = db.relationship('Card', back_populates='user')
-    # False is Dark, True is Light
-    theme = db.Column(db.String(10), default='light')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
-
-class Column(db.Model):
-    __tablename__='cols'
-    id = db.Column(db.Integer, primary_key=True)
-    column_name = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates='columns')
-    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
-    board = db.relationship("Board", back_populates='columns')
-    cards = db.relationship('Card', back_populates='column')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
-    last_edited = db.Column(db.DateTime, nullable=True)
-
-class Card(db.Model):
-    __tablename__='cards'
-    id = db.Column(db.Integer, primary_key=True)
-    card_name = db.Column(db.String(50), nullable=False)
-    card_subtitle = db.Column(db.String(150))
-    card_content = db.Column(db.String(4000))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates='cards')
-    column_id = db.Column(db.Integer, db.ForeignKey('cols.id'))
-    column = db.relationship("Column", back_populates='cards')
-    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
-    board = db.relationship("Board", back_populates='cards')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.datetime.now())
-    last_edited = db.Column(db.DateTime, nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -100,32 +28,6 @@ def load_user(user_id):
 
 # db.drop_all()
 # db.create_all()
-
-# newBoard = Board(
-#     title = "Main",
-#     tdd =  {
-#         "todo": ["Task 1"],
-#         "doing":["Task 2"],
-#         "done": ["Task 3"]
-#     }
-# )
-# db.session.add(newBoard)
-# db.session.commit()
-
-
-
-# daboard = db.session.get(Board, 1)
-# daboard.tdd = {
-#     "To Do": {
-#         "Task 1": ["Do something", f"{dt.now()}"],
-#         "Task 2": ["Do other thing", f"{dt.now()}"]
-#     },
-#     "Doing": {"Task 3": ["Doing thing", f"{dt.now()}"]},
-#     "Review": {"Task 4": ["Review this", f"{dt.now()}"]},
-#     "Done": {"Task 5": ["Done this", f"{dt.now()}"]}
-# }
-
-# db.session.commit()
 
 @app.route("/theme", methods=["POST"])
 def theme():
@@ -213,8 +115,7 @@ def nextcol(card_id, board_id):
         next_col = board_data.columns[col_index + 1]
     except IndexError:
         pass
-    else:
-        
+    else: 
         new_card = Card(
                 card_name = card_data.card_name,
                 card_subtitle = card_data.card_subtitle,
