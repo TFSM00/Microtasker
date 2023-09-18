@@ -1,21 +1,10 @@
 <!-- 
 Every Sidebar Link Icon must have "me-2" in the class
 -->
-
-{% macro theme() %}
-  {% if current_user.is_authenticated %}
-    {% if current_user.theme==True %}
-      white
-    {% else %}
-      dark
-    {% endif %}
-  {% else %}
-    session['theme']
-  {% endif %}
-{% endmacro %}
+{% from 'macros/theme.html' import theme, theme_request %}
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{ session['theme'] }}">
+<html lang="en" data-bs-theme="{{ theme(current_user) }}">
 <head>
   {% block head %}
   <meta charset="UTF-8">
@@ -31,15 +20,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 <body>
 <div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
     {# Create a call to theme to change it and save to current session #}
-    {% if session.theme=='dark' %}
-    <form method="post" action="{{ url_for('theme', theme='white', path=request.path)}}">
-    {% else %}
-    <form method="post" action="{{ url_for('theme', theme='dark', path=request.path)}}">
-    {% endif %}
-      <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="submit" >
-        <i id="color-theme" class="bi bi-brightness-high-fill"></i>
-      </button>
-    </form>
+    {{ theme_request(current_user) }}
     {######################################################################}
 </div> 
      
@@ -114,11 +95,10 @@ Every Sidebar Link Icon must have "me-2" in the class
         <strong>{{ current_user.username }}</strong>
       </a>
       <ul class="dropdown-menu text-small shadow">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
         <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
       </ul>
     </div>
     {% else %}
