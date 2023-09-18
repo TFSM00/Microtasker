@@ -1,28 +1,28 @@
-.row {
-    display: table;
-}
-
-.col-3 {
-    display: table-cell;
-}
-
-.container {
-    min-height: 100%;
-}
-
 .board-parent {
     min-width: 300px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .board-child {
-    min-width: 300px;
-    flex-basis: 0px;
-    flex-grow: 1;
-}
-
-body {
-    margin: 0px;
+    flex: 0 0 25%;
     height: 100vh;
+    overflow-y: auto;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
