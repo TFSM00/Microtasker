@@ -1,0 +1,35 @@
+{%- macro theme(current_user) -%}
+  {%- if current_user.is_authenticated -%}
+    {%- if current_user.theme=='Light' -%}
+      white
+    {%- else -%}
+      dark
+    {%- endif -%}
+  {%- else -%}
+    {%- if session['theme']=='Light' -%}
+    white
+    {%- else -%}
+    dark
+    {%- endif -%}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro theme_request(current_user) -%}
+  {%- if current_user.is_authenticated -%}
+    {%- if current_user.theme=='Light' -%}
+        <form method="post" action="{{ url_for('theme', theme='Dark', path=request.path)}}">
+    {%- else -%}
+        <form method="post" action="{{ url_for('theme', theme='Light', path=request.path)}}">
+    {%- endif -%}
+  {%- else -%}
+    {%- if session['theme']=='Light' -%}
+        <form method="post" action="{{ url_for('theme', theme='Dark', path=request.path)}}">
+    {%- else -%}
+        <form method="post" action="{{ url_for('theme', theme='Light', path=request.path)}}">
+    {%- endif -%}
+  {%- endif -%}
+            <button class="btn btn-bd-primary py-2 d-flex align-items-center" type="submit" >
+                <i id="color-theme" class="bi bi-brightness-high-fill"></i>
+            </button>
+        </form>
+{%- endmacro -%}
