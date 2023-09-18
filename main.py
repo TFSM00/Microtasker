@@ -1,4 +1,5 @@
-from flask import flash, redirect, render_template, request, session, url_for, abort
+from flask import (flash, redirect, render_template, request,
+                   session, url_for, abort)
 from flask_login import current_user, login_required, login_user, logout_user
 
 from functools import wraps
@@ -12,22 +13,22 @@ from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
 
 app, db, login_manager = create_app()
 
-#TODO: Add card route and template
-#TODO: Figure out drag-and-drop
-#TODO: Change theme function to modify db entry
-#TODO: Add user mark to cards
-#TODO: Edit board names
-#TODO: Edit and Delete boards, columns
-#TODO: Add remember me function
-#TODO: Add card modal
-#TODO: Add color to column top
-#TODO: Add color picker to column form and color entry to db
-
+# TODO: Add card route and template
+# TODO: Change theme function to modify db entry
+# TODO: Add user mark to cards
+# TODO: Edit board names
+# TODO: Edit and Delete boards, columns
+# TODO: Add remember me function
+# TODO: Add card modal
+# TODO: Add color to column top
+# TODO: Add color picker to column form and color entry to db
+# TODO: Standardize card creation and hours ago func
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, user_id)
+
 
 def admin_only(func):
     @wraps(func)
@@ -63,11 +64,14 @@ def theme():
 def home():
     return render_template('index.html')
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if request.method == "POST":
-        user = db.session.query(User).filter_by(username=request.form["username"]).first()
+        user = db.session.query(User)\
+            .filter_by(username=request.form["username"]).first()
+        
         if user:
             if check_password_hash(user.password, request.form["password"]):
                 login_user(user)
@@ -80,18 +84,24 @@ def login():
             return redirect(url_for('login'))
     return render_template("login.html", form=form)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = db.session.query(User).filter_by(email=request.form["email"]).first()
-            user_check = db.session.query(User).filter_by(username=request.form['username']).first()
+            user = db.session.query(User)\
+                .filter_by(email=request.form["email"]).first()
+
+            user_check = db.session.query(User)\
+                .filter_by(username=request.form['username']).first()
+
             if user:
                 flash("Email is already registered. Login instead.")
                 return redirect(url_for('login'))
@@ -100,6 +110,7 @@ def register():
                 return redirect(url_for('register'))
             else:
                 hashed_password = generate_password_hash(request.form["password"], "pbkdf2:sha256", 8)
+
                 new_user = User(
                     username = request.form["username"],
                     email = request.form["email"],
@@ -108,7 +119,7 @@ def register():
                 )
                 db.session.add(new_user)
                 db.session.commit()
-                
+
                 login_user(new_user)
                 return redirect(url_for('home'))
 

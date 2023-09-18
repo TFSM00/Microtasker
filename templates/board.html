@@ -12,10 +12,10 @@
 {% include "modals/board-card-modal.html" %}
 {#  #}
 
-<div class="container vh-100 ">
-    <div class="row board-parent d-flex flex-nowrap vh-100 overflow-scroll">
+<div class="container vh-100">
+    <div class="row board-parent d-flex flex-nowrap vh-100">
         {% for col in board.columns %}
-        <div class="col-3 whole border board-col board-child vh-100 dropzone" id="{{ col.id }}">
+        <div class="col-3 whole border border-top-0 border-bottom-0 board-child vh-100 dropzone" id="{{ col.id }}">
             <h4 class="mt-2 mb-4 text-center">{{ col.column_name }}</h4>
             {% for card in col.cards %}
             <div class="drag" draggable="true" id="{{ card.id }}">
@@ -80,7 +80,6 @@
         </div>
         </div>
     </div>
-
 </div>
 
 
