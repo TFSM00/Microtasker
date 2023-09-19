@@ -1,14 +1,17 @@
+body {
+  overflow: hidden;
+}
+
 .board-parent {
     min-width: 300px;
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
 }
 
 .board-child {
     flex: 0 0 25%;
-    height: 100vh;
     overflow-y: auto;
 }
 

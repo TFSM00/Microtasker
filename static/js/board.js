@@ -42,3 +42,7 @@ dropzones.forEach((dropzone) => {
         })
     });
 });
+
+const header = document.querySelector('#header');
+const headerHeight = window.getComputedStyle(header).getPropertyValue('height');
+document.documentElement.style.setProperty('--header-height', headerHeight);
