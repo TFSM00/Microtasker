@@ -4,19 +4,22 @@ from datetime import datetime as dt
 
 db = SQLAlchemy()
 
+
 class Board(db.Model):
-    __tablename__="boards"
-    id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(250), nullable = False)
+    __tablename__ = "boards"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates='boards')
     columns = db.relationship('Column', back_populates='board')
     cards = db.relationship('Card', back_populates='board')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
     last_edited = db.Column(db.DateTime, nullable=True)
+    color = db.Column(db.String(50), default="#212529")
+
 
 class User(UserMixin, db.Model):
-    __tablename__='users'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), nullable=False, unique=True)
     password = db.Column(db.String(500), nullable=False)
@@ -28,8 +31,9 @@ class User(UserMixin, db.Model):
     theme = db.Column(db.String(10), default='light')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
 
+
 class Column(db.Model):
-    __tablename__='cols'
+    __tablename__ = 'cols'
     id = db.Column(db.Integer, primary_key=True)
     column_name = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -39,9 +43,11 @@ class Column(db.Model):
     cards = db.relationship('Card', back_populates='column')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
     last_edited = db.Column(db.DateTime, nullable=True)
+    color = db.Column(db.String(50), default="#212529")
+
 
 class Card(db.Model):
-    __tablename__='cards'
+    __tablename__ = 'cards'
     id = db.Column(db.Integer, primary_key=True)
     card_name = db.Column(db.String(50), nullable=False)
     card_subtitle = db.Column(db.String(150))
@@ -54,3 +60,4 @@ class Card(db.Model):
     board = db.relationship("Board", back_populates='cards')
     date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
     last_edited = db.Column(db.DateTime, nullable=True)
+    color = db.Column(db.String(50), default="#212529")
