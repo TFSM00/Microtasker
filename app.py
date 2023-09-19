@@ -15,7 +15,8 @@ def create_app():
     app.config['SECRET_KEY'] = 'key'
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=5)
+    app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=6)
+    app.config['REMEMBER_COOKIE_DURATION'] = dt.timedelta(hours=6)
 
     app.jinja_env.globals['timeago'] = time_ago
 

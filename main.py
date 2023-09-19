@@ -1,3 +1,5 @@
+import datetime as dt
+
 from flask import (flash, redirect, render_template, request,
                    session, url_for, abort)
 from flask_login import current_user, login_required, login_user, logout_user
@@ -36,14 +38,14 @@ def admin_only(func):
         try:
             if current_user.id == 1:
                 return func(*args, **kwargs)
-            else:
-                return abort(403)
+            return abort(403)
         except AttributeError:
             return abort(403)
     return wrapper
 
 # db.drop_all()
 # db.create_all()
+
 
 @app.route("/theme", methods=["POST"])
 def theme():
@@ -71,14 +73,16 @@ def login():
     if request.method == "POST":
         user = db.session.query(User)\
             .filter_by(username=request.form["username"]).first()
-        
+
         if user:
             if check_password_hash(user.password, request.form["password"]):
-                login_user(user)
+                login_user(user,
+                           remember=form.remember_me.data,
+                           duration=dt.timedelta(weeks=1))
                 return redirect(url_for('home'))
-            else:
-                flash('Wrong password. Try again.')
-                return redirect(url_for('login'))
+
+            flash('Wrong password. Try again.')
+            return redirect(url_for('login'))
         else:
             flash('User does not exist.')
             return redirect(url_for('login'))
@@ -129,8 +133,7 @@ def register():
 @login_required
 def board(id):
     board_object = db.session.get(Board, id)
-    if request.method == 'GET':
-        return render_template('board.html', board = board_object)
+    return render_template('board.html', board = board_object)
 
 @app.route("/delete/<int:board_id>/<int:card_id>")
 @login_required
@@ -215,7 +218,7 @@ def createboard():
             return redirect(url_for('createboard'))
     else:
         return render_template('createboard.html', form=form)
-    
+  
 @app.route("/addcol/<int:id>", methods=["GET", "POST"])
 @login_required
 def addcol(id):
@@ -223,17 +226,20 @@ def addcol(id):
     if request.method == "POST":
         if form.validate_on_submit():
             board_object = db.session.get(Board, id)
-            col_check = db.session.query(Column).filter_by(column_name=form.col_name.data, board=board_object).first()
+            col_check = db.session.query(Column)\
+                .filter_by(column_name=form.col_name.data,
+                           board=board_object).first()
+
             if col_check:
                 flash("A column with this name already exists in this board. Try again")
                 return redirect(url_for('addcol', id=id))
             else:
-                newCol = Column(
+                newcol = Column(
                     column_name = form.col_name.data,
                     user = current_user,
                     board = board_object
                 )
-                db.session.add(newCol)
+                db.session.add(newcol)
                 db.session.commit()
                 return redirect(url_for('addcol', id=id))
         else:
@@ -241,8 +247,11 @@ def addcol(id):
             return redirect(url_for('addcol', id=id))
     else:
         board_object = db.session.get(Board, id)
-        return render_template('addcolumn.html', id = board_object.id, form = form, cols = board_object.columns)
-    
+        return render_template('addcolumn.html',
+                               id = board_object.id,
+                               form = form,
+                               cols = board_object.columns)
+
 
 @app.route('/update-position', methods=["POST"])
 @login_required
@@ -266,6 +275,7 @@ def update_position():
     db.session.delete(card_data)
     db.session.commit()
     return ('', 204)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
