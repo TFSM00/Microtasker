@@ -6,10 +6,10 @@
       dark
     {%- endif -%}
   {%- else -%}
-    {%- if session['theme']=='Light' -%}
-    white
+    {%- if session['theme']=='Dark' -%}
+      dark
     {%- else -%}
-    dark
+      white
     {%- endif -%}
   {%- endif -%}
 {%- endmacro -%}
