@@ -25,7 +25,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 </div> 
      
   <div class="d-flex">
-      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary sticky-top" style="width: 230px;">
+      <div class="sidebar border d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary sticky-top" style="width: 230px;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
       <img class="me-2 pe-none" src="/static/kanban.png" width="35" height="35">
       <span class="fs-4">Microtasker</span>
@@ -53,8 +53,8 @@ Every Sidebar Link Icon must have "me-2" in the class
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               {% for board in current_user.boards %}
                 <li>
-                    <a href="{{ url_for('board', id=board.id)}}" class="d-inline-flex text-decoration-none rounded">
-                  <span class="fs-6 badge rounded-pill bg-info">{{ board.title }}</span>
+                    <a href="{{ url_for('board', board_id=board.id)}}" class="d-inline-flex text-decoration-none rounded">
+                  <span class="fs-6 badge rounded-pill" style="background-color: {{ board.color }};">{{ board.title }}</span>
                     </a>
                 </li>
                 

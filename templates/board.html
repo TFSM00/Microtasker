@@ -13,13 +13,19 @@
 {#  #}
 
 <div class="container vh-100 px-0">
-    <div class="border border-left-0 border-right-0 sticky-top bg-white" id="header">
-        <h3 class="text-center">Hello</h3>
+    <div class="d-flex justify-content-center border border-left-0 border-right-0 sticky-top bg-white" id="header">
+        <div class="fs-4 badge rounded-pill my-1" style="background-color: {{ board.color }}; width: 20%;">
+            {{ board.title }}
+        </div>
     </div>
     <div class="row board-parent d-flex flex-nowrap px-2 vh-100">
         {% for col in board.columns %}
         <div class="col-3 border border-top-0 border-bottom-0 board-child dropzone" id="{{ col.id }}">
-            <h4 class="mt-2 mb-4 text-center">{{ col.column_name }}</h4>
+            <div class="d-flex justify-content-center my-2">
+                <div class="fs-4 badge rounded-pill d-flex justify-content-center align-middle" style="background-color: {{ col.color }}; height: 40%;">
+                    {{ col.column_name }}
+                </div>
+            </div>
             {% for card in col.cards %}
             <div class="drag" draggable="true" id="{{ card.id }}">
                 <a data-bs-toggle="modal" data-bs-target="#card-modal">
@@ -28,7 +34,9 @@
                             <div class="d-grid">
                                 <div class="row row-cols-2 d-flex justify-content-between">
                                     <div class="col-auto d-flex flex-column gap-1">
-                                        <h5 class="card-title" style="display: inline;">{{ card.card_name }}</h5>
+                                        <div class="fs-6 d-flex card-title badge rounded-pill" style="width: max-content; background-color: {{ card.color }};">
+                                            {{ card.card_name }}
+                                        </div>
                                         <p class="card-text m-0">{{ card.card_subtitle }}</p>
                                         <small>{{ timeago(card.date_created|string) }}</small>
                                     </div>
@@ -69,7 +77,7 @@
         <div class="card m-2" style="max-width: 20vw;">
             <div class="card-body">
                 <div class="d-grid">
-                    <a href="{{ url_for('addcol', id=board.id) }}" class="text-decoration-none">
+                    <a href="{{ url_for('addcol', board_id=board.id) }}" class="text-decoration-none">
                         <div class="row row-cols-2 d-flex justify-content-center align-items-center">
                             <h5 class="col-auto card-title m-0 pr-0">Create New Column</h5>
                             <svg class="col-auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-plus" viewBox="0 0 16 16">

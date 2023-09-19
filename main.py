@@ -56,8 +56,8 @@ def theme():
     if current_user.is_authenticated:
         current_user.theme = request.args.get('theme')
         db.session.commit()
-
-    session['theme'] = request.args.get('theme')
+    else:
+        session['theme'] = request.args.get('theme')
     path = request.args.get('path')
     return redirect(path)
 
@@ -83,9 +83,9 @@ def login():
 
             flash('Wrong password. Try again.')
             return redirect(url_for('login'))
-        else:
-            flash('User does not exist.')
-            return redirect(url_for('login'))
+
+        flash('User does not exist.')
+        return redirect(url_for('login'))
     return render_template("login.html", form=form)
 
 
@@ -109,31 +109,34 @@ def register():
             if user:
                 flash("Email is already registered. Login instead.")
                 return redirect(url_for('login'))
-            elif user_check:
+            if user_check:
                 flash("Username is taken. Use a different one.")
                 return redirect(url_for('register'))
-            else:
-                hashed_password = generate_password_hash(request.form["password"], "pbkdf2:sha256", 8)
 
-                new_user = User(
-                    username = request.form["username"],
-                    email = request.form["email"],
-                    password = hashed_password,
-                    theme = request.form['theme']
-                )
-                db.session.add(new_user)
-                db.session.commit()
+            hashed_password = generate_password_hash(request.form["password"],
+                                                     "pbkdf2:sha256", 8)
 
-                login_user(new_user)
-                return redirect(url_for('home'))
+            new_user = User(
+                username=request.form["username"],
+                email=request.form["email"],
+                password=hashed_password,
+                theme=request.form['theme']
+            )
+            db.session.add(new_user)
+            db.session.commit()
+
+            login_user(new_user)
+            return redirect(url_for('home'))
 
     return render_template("register.html", form=form)
 
-@app.route("/board/<int:id>", methods=["GET"])
+
+@app.route("/board/<int:board_id>", methods=["GET"])
 @login_required
-def board(id):
-    board_object = db.session.get(Board, id)
-    return render_template('board.html', board = board_object)
+def board(board_id):
+    board_object = db.session.get(Board, board_id)
+    return render_template('board.html', board=board_object)
+
 
 @app.route("/delete/<int:board_id>/<int:card_id>")
 @login_required
@@ -141,23 +144,25 @@ def delete(card_id, board_id):
     card_data = db.session.get(Card, card_id)
     db.session.delete(card_data)
     db.session.commit()
-    return redirect(url_for('board', id=board_id))
+    return redirect(url_for('board', board_id=board_id))
 
-@app.route("/card/<int:id>", methods=["GET", "POST"])
+
+@app.route("/card/<int:card_id>", methods=["GET", "POST"])
 @login_required
-def card(id):
-    print(id)
+def card(card_id):
     form = CreateCardForm()
     return render_template('card.html', form=form)
+
 
 @app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
 @login_required
 def editcard(card_id):
     card_data = db.session.get(Card, card_id)
     form = EditCardForm(
-            card_name = card_data.card_name,
-            card_subtitle = card_data.card_subtitle,
-            card_content = card_data.card_content)
+            card_name=card_data.card_name,
+            card_subtitle=card_data.card_subtitle,
+            card_content=card_data.card_content,
+            card_color=card_data.card_color)
     col_data = db.session.get(Column, card_data.column_id)
     if request.method == "POST":
         if form.validate_on_submit():
@@ -167,11 +172,16 @@ def editcard(card_id):
             card_data.user = current_user
             card_data.column = col_data
             card_data.board = db.session.get(Board, col_data.board_id)
+            card_data.color = form.card_color.data
             db.session.commit()
-            return redirect(url_for('board', id=col_data.board_id))
-    else:
-        return render_template('editcard.html', form=form, col=col_data, card=card_data)
-    
+            return redirect(url_for('board', board_id=col_data.board_id))
+
+    return render_template('editcard.html',
+                           form=form,
+                           col=col_data,
+                           card=card_data)
+
+
 @app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
 @login_required
 def newcard(col_id):
@@ -179,19 +189,24 @@ def newcard(col_id):
     col_object = db.session.get(Column, col_id)
     if request.method == "POST":
         if form.validate_on_submit():
-            newCard = Card(
-                card_name = form.card_name.data,
-                card_subtitle = form.card_subtitle.data,
-                card_content = form.card_content.data,
-                user = current_user,
-                column = col_object,
-                board = db.session.get(Board, col_object.board_id)
+            new_card = Card(
+                card_name=form.card_name.data,
+                card_subtitle=form.card_subtitle.data,
+                card_content=form.card_content.data,
+                user=current_user,
+                column=col_object,
+                board=db.session.get(Board, col_object.board_id),
+                color=form.card_color.data
             )
-            db.session.add(newCard)
+            db.session.add(new_card)
             db.session.commit()
-            return redirect(url_for('board', id=col_object.board_id))
-    else:
-        return render_template('createcard.html', form=form, col_id=col_id, col_name=col_object.column_name )
+            return redirect(url_for('board', board_id=col_object.board_id))
+
+    return render_template('createcard.html',
+                           form=form,
+                           col_id=col_id,
+                           col_name=col_object.column_name)
+
 
 @app.route("/createboard", methods=["GET", "POST"])
 @login_required
@@ -200,57 +215,66 @@ def createboard():
     if request.method == "POST":
         print(form.errors)
         if form.validate_on_submit():
-            board_detect = db.session.query(Board).filter_by(title=request.form['title']).first()
+            board_detect = db.session.query(Board)\
+                .filter_by(title=request.form['title']).first()
+
             if board_detect:
                 flash("A board already exists with that name. Try again")
                 return redirect(url_for('createboard'))
-            else:
-                new_board = Board(
-                    title = form.title.data,
-                    user = current_user
-                )
-                db.session.add(new_board)
-                db.session.commit()
-                board_id = db.session.query(Board).filter_by(user=current_user, title=form.title.data).all()[-1].id
-                return redirect(url_for('addcol', id = board_id))
-        else:
-            flash("The board name can't be longer than 50 characters")
-            return redirect(url_for('createboard'))
-    else:
-        return render_template('createboard.html', form=form)
-  
-@app.route("/addcol/<int:id>", methods=["GET", "POST"])
+
+            new_board = Board(
+                title=form.title.data,
+                user=current_user,
+                color=form.board_color.data
+            )
+            db.session.add(new_board)
+            db.session.commit()
+            board_id = db.session.query(Board)\
+                .filter_by(user=current_user, title=form.title.data)\
+                .all()[-1].id
+
+            return redirect(url_for('addcol', board_id=board_id))
+
+        flash("The board name can't be longer than 50 characters")
+        return redirect(url_for('createboard'))
+
+    return render_template('createboard.html', form=form)
+
+
+@app.route("/addcol/<int:board_id>", methods=["GET", "POST"])
 @login_required
-def addcol(id):
+def addcol(board_id):
     form = AddColForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            board_object = db.session.get(Board, id)
+            board_object = db.session.get(Board, board_id)
             col_check = db.session.query(Column)\
                 .filter_by(column_name=form.col_name.data,
                            board=board_object).first()
 
             if col_check:
-                flash("A column with this name already exists in this board. Try again")
-                return redirect(url_for('addcol', id=id))
-            else:
-                newcol = Column(
-                    column_name = form.col_name.data,
-                    user = current_user,
-                    board = board_object
-                )
-                db.session.add(newcol)
-                db.session.commit()
-                return redirect(url_for('addcol', id=id))
-        else:
-            flash("The column name can't have more than 50 characters")
-            return redirect(url_for('addcol', id=id))
-    else:
-        board_object = db.session.get(Board, id)
-        return render_template('addcolumn.html',
-                               id = board_object.id,
-                               form = form,
-                               cols = board_object.columns)
+                flash("A column with this name already exists in this board.\
+                       Try again")
+
+                return redirect(url_for('addcol', id=board_id))
+            newcol = Column(
+                column_name=form.col_name.data,
+                user=current_user,
+                board=board_object,
+                color=form.col_color.data
+            )
+            db.session.add(newcol)
+            db.session.commit()
+            return redirect(url_for('addcol', id=board_id))
+
+        flash("The column name can't have more than 50 characters")
+        return redirect(url_for('addcol', id=board_id))
+
+    board_object = db.session.get(Board, board_id)
+    return render_template('addcolumn.html',
+                           id=board_object.id,
+                           form=form,
+                           cols=board_object.columns)
 
 
 @app.route('/update-position', methods=["POST"])
@@ -263,13 +287,14 @@ def update_position():
     card_data = db.session.get(Card, card_id)
 
     new_card = Card(
-            card_name = card_data.card_name,
-            card_subtitle = card_data.card_subtitle,
-            card_content = card_data.card_content,
-            user = card_data.user,
-            column = col_data,
-            board = board_data,
-            date_created = card_data.date_created
+            card_name=card_data.card_name,
+            card_subtitle=card_data.card_subtitle,
+            card_content=card_data.card_content,
+            user=card_data.user,
+            column=col_data,
+            board=board_data,
+            date_created=card_data.date_created,
+            color=card_data.color
         )
     db.session.add(new_card)
     db.session.delete(card_data)
