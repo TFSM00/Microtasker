@@ -28,12 +28,17 @@
 		{% endfor %}
     </div>
     <br>
-    <div >
+    <div>
         {{ form.card_content.label(class_='form-label') }}
         {{ form.card_content(class_='form-control card-content') }}
         {% for err in form.card_content.errors %}
 			<span style="color:red">{{ err }}</span>
 		{% endfor %}
+    </div>
+    <br>
+    <div>
+      {{ form.card_color.label(class_='form-label') }}<br>
+      {{ form.card_color(class_='form-control form-control-color') }}
     </div>
     <br>
     {{ form.submit(class_='btn btn-primary w-100 py-2') }}

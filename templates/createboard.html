@@ -28,6 +28,11 @@
 		{% endfor %}
     </div>
     <br>
+    <div>
+      {{ form.board_color.label(class_='form-label') }}<br>
+      {{ form.board_color(class_='form-control form-control-color') }}
+    </div>
+    <br>
     {{ form.submit(class_='btn btn-primary w-100 py-2') }}
   </form>
 </main>
