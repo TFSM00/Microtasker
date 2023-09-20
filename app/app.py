@@ -6,15 +6,17 @@ from flask_login import LoginManager
 from flask_session import Session
 
 from models import db
-from os import environ, path, getcwd
+from os import environ
+from config import DEV_DB, PROD_DB
 from utils.funcs import time_ago
 
 
 def create_app():
     app = Flask(__name__)
-    db_file_path = path.join(getcwd(), 'micro.db')
-    # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_file_path}'
-    app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
+    if environ.get('DEBUG') == '1':
+        app.config['SQLALCHEMY_DATABASE_URI'] = DEV_DB
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = PROD_DB
     app.config['SECRET_KEY'] = 'key'
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_TYPE'] = 'filesystem'

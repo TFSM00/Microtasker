@@ -12,20 +12,19 @@ from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm)
-from os import environ, path, getcwd
+from logging import FileHandler, WARNING
+
+file_handler = FileHandler('errorlog.txt')
+file_handler.setLevel(WARNING)
 
 app, db, login_manager = create_app()
 
 # TODO: Add card route and template
-# TODO: Change theme function to modify db entry
 # TODO: Add user mark to cards
 # TODO: Edit board names
 # TODO: Edit and Delete boards, columns
-# TODO: Add remember me function
 # TODO: Add card modal
-# TODO: Add color to column top
-# TODO: Add color picker to column form and color entry to db
-# TODO: Standardize card creation and hours ago func
+# BUG: Theme no longer works correctly on postgres
 
 
 @login_manager.user_loader
@@ -257,7 +256,7 @@ def addcol(board_id):
                 flash("A column with this name already exists in this board.\
                        Try again")
 
-                return redirect(url_for('addcol', id=board_id))
+                return redirect(url_for('addcol', board_id=board_id))
             newcol = Column(
                 column_name=form.col_name.data,
                 user=current_user,
@@ -266,14 +265,14 @@ def addcol(board_id):
             )
             db.session.add(newcol)
             db.session.commit()
-            return redirect(url_for('addcol', id=board_id))
+            return redirect(url_for('addcol', board_id=board_id))
 
         flash("The column name can't have more than 50 characters")
-        return redirect(url_for('addcol', id=board_id))
+        return redirect(url_for('addcol', board_id=board_id))
 
     board_object = db.session.get(Board, board_id)
     return render_template('addcolumn.html',
-                           id=board_object.id,
+                           board_id=board_object.id,
                            form=form,
                            cols=board_object.columns)
 
