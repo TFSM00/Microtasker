@@ -1,12 +1,10 @@
-FROM python:3.12.0rc3-alpine3.18
+FROM tiangolo/uwsgi-nginx:python3.11
 
 WORKDIR /app
 
 COPY requirements.txt ./
 
-RUN apk add linux-headers
-RUN apk add build-base
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY . /app
 
