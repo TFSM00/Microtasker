@@ -33,7 +33,7 @@ services:
     container_name: nginx
     restart: always
     ports:
-      - "80:80"
+      - "2000:2000"
 
 volumes:
   pgdata: {}
