@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY requirements.txt ./
 
+RUN apk add linux-headers
+RUN apk add build-base
 RUN pip install -r requirements.txt
 
 COPY . /app
