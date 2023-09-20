@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  microtasker:
+    container_name: Microtasker
+    image: tfsm00/microtasker:1.0.0
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@flask_db:5432/micro
+    depends_on:
+      - flask_db
+    expose:
+      - 8080
+    restart: always
+  
+  flask_db:
+    container_name: flask_db
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=micro
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata: {}

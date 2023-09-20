@@ -12,6 +12,7 @@ from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm)
+from os import environ, path, getcwd
 
 app, db, login_manager = create_app()
 
@@ -300,7 +301,3 @@ def update_position():
     db.session.delete(card_data)
     db.session.commit()
     return ('', 204)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
