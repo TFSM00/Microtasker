@@ -22,6 +22,9 @@ services:
       - 80:80
     networks:
       - flask_network
+    sysctl:
+      net.ipv4.ip_unprivileged_port_start: 80
+
 
   db:
     image: postgres:13
