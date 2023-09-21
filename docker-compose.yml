@@ -22,8 +22,12 @@ services:
       - 80:80
     networks:
       - flask_network
+<<<<<<< HEAD
     sysctl:
       net.ipv4.ip_unprivileged_port_start: 80
+=======
+    net.ipv4.ip_unprivileged_port_start: 80
+>>>>>>> e39e62289450d5e6627be335e505c0451606f8bc
 
 
   db:
