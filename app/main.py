@@ -12,10 +12,6 @@ from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm)
-from logging import FileHandler, WARNING
-
-file_handler = FileHandler('errorlog.txt')
-file_handler.setLevel(WARNING)
 
 app, db, login_manager = create_app()
 
