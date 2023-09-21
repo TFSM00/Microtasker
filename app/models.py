@@ -61,4 +61,3 @@ class Card(db.Model):
     date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
     last_edited = db.Column(db.DateTime, nullable=True)
     color = db.Column(db.String(50), default="#212529")
-

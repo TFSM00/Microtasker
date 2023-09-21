@@ -30,10 +30,6 @@ services:
       - 5432:5432
     networks:
       - flask_network
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=micro
     volumes:
       - postgres_data:/var/lib/postgresql/data
     
