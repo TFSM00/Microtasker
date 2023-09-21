@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+  app:
+    # Nginx conf file must have proxy as build name, app in this case
+    build: app
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      - DEBUG=0
+    networks:
+      - flask_network
+    volumes:
+      - sessions:/app/flask_session/
+    depends_on:
+      - db
+
+  nginx:
+    build: nginx
+    restart: always
+    ports:
+      - 80:80
+    networks:
+      - flask_network
+
+  db:
+    image: postgres:13
+    restart: always
+    ports:
+      - 5432:5432
+    networks:
+      - flask_network
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=micro
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+
+networks:
+  flask_network:
+
+volumes:
+  postgres_data:
+  sessions:

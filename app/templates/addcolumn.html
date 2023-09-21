@@ -7,7 +7,7 @@
 
 {% block main %}
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-  <form class="form-signin" action="{{ url_for('addcol', board_id=id) }}" method="post">
+  <form class="form-signin" action="{{ url_for('addcol', board_id=board_id) }}" method="post">
     <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
     <h1 class="h3 mb-3 fw-normal">Add Column</h1>
 
@@ -34,7 +34,7 @@
     <br>
     <div class="d-flex justify-content-between">
         {{ form.submit(class_='btn btn-success w-40 py-2') }}
-        <a href="{{ url_for('board', board_id=id) }}">
+        <a href="{{ url_for('board', board_id=board_id) }}">
           <button type="button" class="btn btn-primary w-40 py-2">Go to Board</button>
         </a>
     </div>
