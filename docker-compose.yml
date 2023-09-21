@@ -19,11 +19,9 @@ services:
     build: nginx
     restart: always
     ports:
-      - 80:80
+      - 8080:8080
     networks:
       - flask_network
-    sysctl:
-      net.ipv4.ip_unprivileged_port_start: 80
 
 
   db:
