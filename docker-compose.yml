@@ -23,7 +23,6 @@ services:
     networks:
       - flask_network
 
-
   db:
     image: postgres:13
     restart: always
