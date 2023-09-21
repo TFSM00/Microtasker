@@ -11,12 +11,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: humbertocrispim/ssh-docker-compose-action@v1.0.0
+    - uses: TFSM00/ssh-docker-compose-action@main
       name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.SSH_HOST }}
-        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        ssh_user: docker-deploy
-        ssh_port: ${{ secrets.SSH_PORT}}
+        ssh_password: ${{ secrets. SSH_PASSWORD }}
+        ssh_user: ${{ secrets.SSH_USER }}
+        ssh_port: ${{ secrets.SSH_PORT }}
         docker_compose_prefix: microtasker
         pull: true # Update images when pulling
