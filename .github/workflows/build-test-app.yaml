@@ -1,20 +1,22 @@
-name: Remote Docker Compose SSH Deployment
+name: Deploy
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ master ]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
 
-    - uses: TFSM00/docker-compose-ssh-deployment@master
-      name: Docker-Compose Remote Deployment
+    - uses: humbertocrispim/ssh-docker-compose-action@v1.0.0
+      name: Remote Deployment with Docker-Compose
       with:
         ssh_host: ${{ secrets.SSH_HOST }}
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        ssh_user: ${{ secrets.SSH_USER }}
-        ssh_port: ${{ secrets.SSH_PORT }}
-        dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-        dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        docker_compose_down: 'true'
+        ssh_user: docker-deploy
+        ssh_port: ${{ secrets.SSH_PORT}}
+        docker_compose_prefix: microtasker
+        pull: true # Update images when pulling
