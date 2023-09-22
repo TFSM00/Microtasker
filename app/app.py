@@ -17,7 +17,7 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = DEV_DB
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = PROD_DB
-    app.config['SECRET_KEY'] = uuid.uuid4()
+    app.config['SECRET_KEY'] = uuid.uuid4().hex
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=6)
