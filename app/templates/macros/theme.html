@@ -1,16 +1,8 @@
-{%- macro theme(current_user) -%}
-  {%- if current_user.is_authenticated -%}
-    {%- if current_user.theme=='Light' -%}
-      white
-    {%- else -%}
-      dark
-    {%- endif -%}
+{%- macro theme() -%}
+  {%- if session['theme']=='light' -%}
+  dark
   {%- else -%}
-    {%- if session['theme']=='Dark' -%}
-      dark
-    {%- else -%}
-      white
-    {%- endif -%}
+  light
   {%- endif -%}
 {%- endmacro -%}
 
