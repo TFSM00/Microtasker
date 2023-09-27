@@ -1,4 +1,5 @@
 {% from 'macros/theme.html' import theme %}
+{% from 'modals/board-card-modal.html' import modal %}
 {% extends "base.html" %}
 
 {% block head %}
@@ -10,7 +11,9 @@
 {{ super() }}
 
 {# Card Modal #}
-{% include "modals/board-card-modal.html" %}
+{% for card in board.cards %}
+    {{ modal(card) }}
+{% endfor %}
 {#  #}
 
 <div class="container vh-100 px-0">
@@ -28,8 +31,8 @@
                 </div>
             </div>
             {% for card in col.cards %}
-            <div class="drag" draggable="true" id="{{ card.id }}">
-                <a data-bs-toggle="modal" data-bs-target="#card-modal">
+            <a data-bs-toggle="modal" data-bs-target="#card-modal-{{ card.id }}">
+                <div class="drag" draggable="true" id="{{ card.id }}">
                     <div class="card w-100 mb-3">
                         <div class="card-body">
                             <div class="d-grid">
@@ -41,21 +44,13 @@
                                         <p class="card-text m-0">{{ card.card_subtitle }}</p>
                                         <small>{{ timeago(card.date_created|string) }}</small>
                                     </div>
-                                    <div class="col-auto d-flex flex-column justify-content-center gap-3">
-                                        <a href="{{ url_for('editcard', card_id=card.id) }}" class="text-decoration-none">
-                                            <button class="btn btn-warning px-1 py-1 lh-1 w-100">Edit</button>
-                                        </a>
-                                        <a href="{{ url_for('delete', board_id=board.id ,card_id=card.id) }}" class="text-decoration-none">
-                                            <button class="btn btn-danger px-1 py-1 lh-1">Delete</button>
-                                        </a>  
-                                    </div>
                                 </div>
                                 
                             </div>
                         </div>
                     </div>
-                </a>
-            </div>
+                </div>
+            </a>
             {% endfor %}
             <div class="card w-100 mb-3" id="newcard">
                 <div class="card-body">

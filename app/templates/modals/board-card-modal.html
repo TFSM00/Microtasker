@@ -1,26 +1,49 @@
-<div class="modal fade" id="card-modal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
+{% macro modal(card)%}
+<div class="modal fade" id="card-modal-{{ card.id }}" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="exampleModalCenteredScrollableTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><h3>Card Viewer</h3></font></font></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Recipient:</label>
-            <input type="text" class="form-control" id="recipient-name">
+
+      <div class="modal-body row" style="height: 100%;">
+          <div class="col-8">
+            <h4>{{ card.card_name }}</h4>
+            <p class="fs-6 fw-light">ID: {{ card.id }}</p>
+            <hr>
+
+            <h4>Description</h4>
+            <p class="fs-6">{{ card.card_subtitle }}</p>
+            <hr>
+
+            <h4>Content</h4>
+            <p class="fs-6 text-break" style="white-space: pre-wrap">{{ card.card_content }}</p>
+            <hr>
+
+            <h6>Card created by: </h6>
+            <p class="fw-bold" style="color: var(--bs-primary)">{{ card.user.username }}</p>
+            <h6>Card created on: </h6>
+            <p class="fs-6 fw-light">{{ card.date_created }} (UTC Time)</p>
+            <h6>Last edited on: </h6>
+            <p class="fs-6 fw-light">{{ card.last_edited }} (UTC Time)</p>
           </div>
-          <div class="mb-3">
-            <label for="message-text" class="col-form-label">Message:</label>
-            <textarea class="form-control" id="message-text"></textarea>
+
+          <div class="vr" style="padding: 1px;"></div>
+          <div class="col-3 f-flex flex-column">
+            <h4>Actions</h4>
+            <span>
+              <a href="{{ url_for('editcard', card_id=card.id) }}" class="text-decoration-none">
+                <button type="button" class="w-100 m-1 text-start btn btn-info btn-sm"><i class="bi bi-pencil-square me-2"></i>Edit</button>
+              </a>
+              <a href="{{ url_for('delete', board_id=card.board_id, card_id=card.id) }}" class="text-decoration-none">
+                <button type="button" class="w-100 m-1 text-start btn btn-danger btn-sm"><i class="bi bi-trash me-2"></i>Delete</button>
+              </a>
+              <button type="button" class="w-100 m-1 text-start btn btn-warning btn-sm"><i class="bi bi-cone-striped me-2"></i>Under Construction</button>
+            </span>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
       </div>
     </div>
   </div>
 </div>
+{% endmacro %}
