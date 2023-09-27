@@ -2,6 +2,7 @@ import datetime as dt
 import uuid
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_gravatar import Gravatar
 from flask_login import LoginManager
 from flask_session import Session
 
@@ -24,6 +25,15 @@ def create_app():
 
     app.jinja_env.globals['timeago'] = time_ago
 
+    gravatar = Gravatar(app, 
+                        size=100, 
+                        rating='g',
+                        default='retro',
+                        force_default=False,
+                        force_lower=False,
+                        use_ssl=False,
+                        base_url=None)
+
     Bootstrap(app)
     app.app_context().push()
     Session(app)
@@ -32,4 +42,4 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
 
-    return app, db, login_manager
+    return app, db, login_manager, gravatar

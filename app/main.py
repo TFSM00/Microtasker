@@ -13,7 +13,7 @@ from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm)
 
-app, db, login_manager = create_app()
+app, db, login_manager, gravatar = create_app()
 
 # TODO: Add card route and template
 # TODO: Add user mark to cards
