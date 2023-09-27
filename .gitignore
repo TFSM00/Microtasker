@@ -9,6 +9,7 @@ instance/*
 env
 flask_session/
 *.db
+app/micro.db
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
