@@ -1,6 +1,5 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime as dt
 
 db = SQLAlchemy()
 
@@ -13,7 +12,7 @@ class Board(db.Model):
     user = db.relationship("User", back_populates='boards')
     columns = db.relationship('Column', back_populates='board')
     cards = db.relationship('Card', back_populates='board')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
+    date_created = db.Column(db.DateTime, nullable=False)
     last_edited = db.Column(db.DateTime, nullable=True)
     color = db.Column(db.String(50), default="#212529")
 
@@ -27,9 +26,7 @@ class User(UserMixin, db.Model):
     boards = db.relationship('Board', back_populates='user')
     columns = db.relationship('Column', back_populates='user')
     cards = db.relationship('Card', back_populates='user')
-    # False is Dark, True is Light
-    theme = db.Column(db.String(10), default='light')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
+    date_created = db.Column(db.DateTime, nullable=False)
 
 
 class Column(db.Model):
@@ -41,7 +38,7 @@ class Column(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='columns')
     cards = db.relationship('Card', back_populates='column')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
+    date_created = db.Column(db.DateTime, nullable=False)
     last_edited = db.Column(db.DateTime, nullable=True)
     color = db.Column(db.String(50), default="#212529")
 
@@ -58,6 +55,6 @@ class Card(db.Model):
     column = db.relationship("Column", back_populates='cards')
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'))
     board = db.relationship("Board", back_populates='cards')
-    date_created = db.Column(db.DateTime, nullable=False, default=dt.utcnow())
+    date_created = db.Column(db.DateTime, nullable=False)
     last_edited = db.Column(db.DateTime, nullable=True)
     color = db.Column(db.String(50), default="#212529")
