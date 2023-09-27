@@ -20,7 +20,6 @@ app, db, login_manager = create_app()
 # TODO: Edit board names
 # TODO: Edit and Delete boards, columns
 # TODO: Add card modal
-# BUG: Theme no longer works correctly on postgres
 
 
 @login_manager.user_loader
@@ -39,21 +38,14 @@ def admin_only(func):
             return abort(403)
     return wrapper
 
-# db.drop_all()
-# db.create_all()
 
-
-@app.route("/theme", methods=["POST"])
+@app.route("/theme", methods=["GET"])
 def theme():
     """
     Receives a theme string and a path, saves the theme to a cookie
     and redirects back to the page from the post request is made.
     """
-    if current_user.is_authenticated:
-        current_user.theme = request.args.get('theme')
-        db.session.commit()
-    else:
-        session['theme'] = request.args.get('theme')
+    session['theme'] = request.args.get('theme')
     path = request.args.get('path')
     return redirect(path)
 
@@ -74,7 +66,7 @@ def login():
             if check_password_hash(user.password, request.form["password"]):
                 login_user(user,
                            remember=form.remember_me.data,
-                           duration=dt.timedelta(weeks=1))
+                           duration=dt.timedelta(days=30))
                 return redirect(url_for('home'))
 
             flash('Wrong password. Try again.')
@@ -116,7 +108,7 @@ def register():
                 username=request.form["username"],
                 email=request.form["email"],
                 password=hashed_password,
-                theme=request.form['theme']
+                date_created=dt.datetime.utcnow()
             )
             db.session.add(new_user)
             db.session.commit()
@@ -129,14 +121,22 @@ def register():
 @app.route("/board/<int:board_id>", methods=["GET"])
 @login_required
 def board(board_id):
-    board_object = db.session.get(Board, board_id)
+    board_object = db.session.query(Board)\
+        .filter_by(id=board_id, user_id=current_user.id)\
+        .first()
+    if not board_object:
+        return abort(404)
     return render_template('board.html', board=board_object)
 
 
 @app.route("/delete/<int:board_id>/<int:card_id>")
 @login_required
 def delete(card_id, board_id):
-    card_data = db.session.get(Card, card_id)
+    card_data = db.session.query(Card)\
+        .filter_by(id=card_id, user_id=current_user.id)\
+        .first()
+    if not card_data:
+        return abort(404)
     db.session.delete(card_data)
     db.session.commit()
     return redirect(url_for('board', board_id=board_id))
@@ -152,12 +152,16 @@ def card(card_id):
 @app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
 @login_required
 def editcard(card_id):
-    card_data = db.session.get(Card, card_id)
+    card_data = db.session.query(Card)\
+        .filter_by(id=card_id, user_id=current_user.id)\
+        .first()
+    if not card_data:
+        return abort(404)
     form = EditCardForm(
             card_name=card_data.card_name,
             card_subtitle=card_data.card_subtitle,
             card_content=card_data.card_content,
-            card_color=card_data.card_color)
+            card_color=card_data.color)
     col_data = db.session.get(Column, card_data.column_id)
     if request.method == "POST":
         if form.validate_on_submit():
@@ -168,6 +172,7 @@ def editcard(card_id):
             card_data.column = col_data
             card_data.board = db.session.get(Board, col_data.board_id)
             card_data.color = form.card_color.data
+            card_data.last_edited = dt.datetime.utcnow()
             db.session.commit()
             return redirect(url_for('board', board_id=col_data.board_id))
 
@@ -181,7 +186,11 @@ def editcard(card_id):
 @login_required
 def newcard(col_id):
     form = CreateCardForm()
-    col_object = db.session.get(Column, col_id)
+    col_object = db.session.query(Column)\
+        .filter_by(id=col_id, user_id=current_user.id)\
+        .first()
+    if not col_object:
+        return abort(404)
     if request.method == "POST":
         if form.validate_on_submit():
             new_card = Card(
@@ -191,7 +200,8 @@ def newcard(col_id):
                 user=current_user,
                 column=col_object,
                 board=db.session.get(Board, col_object.board_id),
-                color=form.card_color.data
+                color=form.card_color.data,
+                date_created=dt.datetime.utcnow()
             )
             db.session.add(new_card)
             db.session.commit()
@@ -208,10 +218,11 @@ def newcard(col_id):
 def createboard():
     form = CreateBoardForm()
     if request.method == "POST":
-        print(form.errors)
         if form.validate_on_submit():
             board_detect = db.session.query(Board)\
-                .filter_by(title=request.form['title']).first()
+                .filter_by(title=request.form['title'],
+                           user_id=current_user.id)\
+                .first()
 
             if board_detect:
                 flash("A board already exists with that name. Try again")
@@ -220,12 +231,13 @@ def createboard():
             new_board = Board(
                 title=form.title.data,
                 user=current_user,
-                color=form.board_color.data
+                color=form.board_color.data,
+                date_created=dt.datetime.utcnow()
             )
             db.session.add(new_board)
             db.session.commit()
             board_id = db.session.query(Board)\
-                .filter_by(user=current_user, title=form.title.data)\
+                .filter_by(user_id=current_user.id, title=form.title.data)\
                 .all()[-1].id
 
             return redirect(url_for('addcol', board_id=board_id))
@@ -242,10 +254,15 @@ def addcol(board_id):
     form = AddColForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            board_object = db.session.get(Board, board_id)
+            board_object = db.session.query(Board)\
+                .filter_by(id=board_id, user_id=current_user.id)\
+                .first()
+            if not board_object:
+                return abort(404)
+
             col_check = db.session.query(Column)\
                 .filter_by(column_name=form.col_name.data,
-                           board=board_object).first()
+                           board=board_object, user_id=current_user.id).first()
 
             if col_check:
                 flash("A column with this name already exists in this board.\
@@ -256,7 +273,8 @@ def addcol(board_id):
                 column_name=form.col_name.data,
                 user=current_user,
                 board=board_object,
-                color=form.col_color.data
+                color=form.col_color.data,
+                date_created=dt.datetime.utcnow()
             )
             db.session.add(newcol)
             db.session.commit()
@@ -265,7 +283,11 @@ def addcol(board_id):
         flash("The column name can't have more than 50 characters")
         return redirect(url_for('addcol', board_id=board_id))
 
-    board_object = db.session.get(Board, board_id)
+    board_object = db.session.query(Board)\
+        .filter_by(id=board_id, user_id=current_user.id)\
+        .first()
+    if not board_object:
+        return abort(404)
     return render_template('addcolumn.html',
                            board_id=board_object.id,
                            form=form,
@@ -289,7 +311,8 @@ def update_position():
             column=col_data,
             board=board_data,
             date_created=card_data.date_created,
-            color=card_data.color
+            color=card_data.color,
+            last_edited=dt.datetime.utcnow()
         )
     db.session.add(new_card)
     db.session.delete(card_data)
