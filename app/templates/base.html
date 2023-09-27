@@ -4,7 +4,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 {% from 'macros/theme.html' import theme, theme_request %}
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{ theme(current_user) }}">
+<html lang="en" data-bs-theme="{{ session['theme'] }}">
 <head>
   {% block head %}
   <meta charset="UTF-8">
@@ -20,7 +20,13 @@ Every Sidebar Link Icon must have "me-2" in the class
 <body>
 <div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
     {# Create a call to theme to change it and save to current session #}
-    {{ theme_request(current_user) }}
+    {% if session.theme=='dark' %}
+    <a class="btn btn-bd-primary py-2 d-flex align-items-center" href="{{ url_for('theme', theme='white', path=request.path)}}">
+    {% else %}
+    <a class="btn btn-bd-primary py-2 d-flex align-items-center" href="{{ url_for('theme', theme='dark', path=request.path)}}">
+    {% endif %}
+      <i id="color-theme" class="bi bi-brightness-high-fill"></i>
+    </a>
     {######################################################################}
 </div> 
      
@@ -87,8 +93,8 @@ Every Sidebar Link Icon must have "me-2" in the class
       {% endif %}
 
     </ul>
-    <hr>
     {% if current_user.is_authenticated %}
+    <hr>
     <div class="dropdown" id="userprofile">
       <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
