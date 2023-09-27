@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, EmailField, SubmitField,
-                     BooleanField, RadioField, TextAreaField)
+                     BooleanField, TextAreaField)
 from wtforms.validators import DataRequired, Email, Length
 from wtforms.widgets.core import ColorInput
 
@@ -9,9 +9,9 @@ class RegisterForm(FlaskForm):
     username = StringField(label='Username', validators=[DataRequired()])
     email = EmailField(label='Email', validators=[Email()])
     password = PasswordField(label='Password', validators=[Length(min=5)])
-    theme = RadioField(label="Select preferred theme",
-                       choices=[("Light"), ("Dark")],
-                       coerce=bool)
+    # theme = RadioField(label="Select preferred theme",
+    #                    choices=[("Light"), ("Dark")],
+    #                    coerce=bool)
     submit = SubmitField(label="Register")
 
 

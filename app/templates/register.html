@@ -43,14 +43,14 @@
 		{% endfor %}
     </div>
     <br>
-    <div class="radio">
+    {# <div class="radio">
         {{ form.theme.label }}
         {{ form.theme(class_='form-select' ,size=40) }}
         {% for err in form.theme.errors %}
            <span style="color:red">{{ err }}</span>
         {% endfor %}
     </div>
-    <br>
+    <br> #}
     {{ form.submit(class_='btn btn-primary w-100 py-2') }}
   </form>
 </main>
