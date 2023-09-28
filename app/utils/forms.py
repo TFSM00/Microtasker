@@ -77,3 +77,8 @@ class EditBoardForm(FlaskForm):
                               validators=[DataRequired(), Length(max=20)],
                               widget=ColorInput())
     submit = SubmitField(label='Edit Board')
+
+
+class DeleteAccountForm(FlaskForm):
+    verification = BooleanField(label='Yes, I want to delete my account')
+    submit = SubmitField(label="Delete Account")
