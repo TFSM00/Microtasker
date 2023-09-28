@@ -54,7 +54,7 @@ class CreateBoardForm(FlaskForm):
 
 class AddColForm(FlaskForm):
     col_name = StringField(label='Column Name',
-                           validators=[DataRequired(), Length(max=50)])
+                           validators=[DataRequired(), Length(max=30)])
     col_color = StringField(label='Column Color',
                             validators=[DataRequired(), Length(max=20)],
                             widget=ColorInput())
@@ -63,7 +63,7 @@ class AddColForm(FlaskForm):
 
 class EditColForm(FlaskForm):
     col_name = StringField(label='Column Name',
-                           validators=[DataRequired(), Length(max=50)])
+                           validators=[DataRequired(), Length(max=30)])
     col_color = StringField(label='Column Color',
                             validators=[DataRequired(), Length(max=20)],
                             widget=ColorInput())
