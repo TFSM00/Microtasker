@@ -12,15 +12,9 @@ from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm, EditBoardForm,
-                         EditColForm)
+                         EditColForm, DeleteAccountForm)
 
 app, db, login_manager, gravatar = create_app()
-
-# TODO: Add card route and template
-# TODO: Add user mark to cards
-# TODO: Edit board names
-# TODO: Edit and Delete boards, columns
-# TODO: Add card modal
 
 
 @login_manager.user_loader
@@ -54,6 +48,40 @@ def theme():
 @app.route("/")
 def home():
     return render_template('index.html')
+
+
+@app.route("/profile/<username>")
+def profile(username):
+    return render_template('profile.html')
+
+
+@app.route("/profile/<username>/delete", methods=["GET", "POST"])
+def deleteaccount(username):
+    form = DeleteAccountForm()
+    if username != current_user.username:
+        return abort(401)
+
+    if request.method == "POST":
+        if form.verification.data and form.validate_on_submit():
+            for board in current_user.boards:
+                db.session.delete(board)
+            for col in current_user.columns:
+                db.session.delete(col)
+            for card in current_user.cards:
+                db.session.delete(card)
+            user = db.session.query(User)\
+                .filter_by(username=current_user.username)\
+                .first()
+            logout_user()
+            db.session.delete(user)
+            db.session.commit()
+            return redirect(url_for('home'))
+        return redirect(url_for('deleteaccount', username=current_user.username))
+    return render_template('deleteaccount.html', form=form)
+
+
+
+@app.route("/profile/<username>/")
 
 
 @app.route("/login", methods=["GET", "POST"])
