@@ -1,52 +1,49 @@
 {% extends "base.html" %}
 
 {% block main %}
-<main class="flex-grow-1 d-flex p-3 px-4">
-    <div class="row">
-        <div class="col">
-            <h1>Profile</h1>
-            <br>
-            <div class="d-flex flex-column align-items-center p-3 border rounded">
-                <img class="d-block rounded-circle mb-2" src="{{ current_user.email | gravatar }}" width="80" alt="{{ current_user.username }}">
-                <h3 class="h5 mb-1">{{ current_user.username }}</h3>
-                <p class="fs-sm text-muted mb-0">{{ current_user.email }}</p>
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+    <div class="d-flex flex-column align-items-center p-3 border rounded">
+        <h1>Profile</h1>
+        <br>
+        <img class="d-block rounded-circle mb-2" src="{{ current_user.email | gravatar }}" width="80" alt="{{ current_user.username }}">
+        <h3 class="h5 mb-1">{{ current_user.username }}</h3>
+        <p class="fs-sm text-muted mb-0">{{ current_user.email }}</p>
+        <br>
+        <h2>Stats</h2>
+        <div class="d-flex border p-3 gap-3 rounded">
+            <div>
+                <h5>Boards</h5>
+                <h6 class="mb-0 text-center fw-normal">{{ current_user.boards|length }}</h6>
             </div>
-            <br>
-            <h2>Stats</h2>
-            <div class="d-flex border p-3 gap-3 rounded">
-                <div>
-                    <h5>Boards</h5>
-                    <h6 class="mb-0 text-center fw-normal">{{ current_user.boards|length }}</h6>
-                </div>
-                <div class="vr"></div>
-                <div>
-                    <h5>Columns</h5>
-                    <h6 class="mb-0 text-center fw-normal">{{ current_user.columns|length }}</h6>
-                </div>
-                <div class="vr"></div>
-                <div>
-                    <h5>Cards</h5>
-                    <h6 class="mb-0 text-center fw-normal">{{ current_user.cards|length }}</h6>
-                </div>
+            <div class="vr"></div>
+            <div>
+                <h5>Columns</h5>
+                <h6 class="mb-0 text-center fw-normal">{{ current_user.columns|length }}</h6>
             </div>
-            <br>
-            <h2>Actions</h2>
-            <div class="d-flex flex-column align-items-center p-3 gap-2 border rounded">
-            <a href="{{ url_for('home') }}" class="text-decoration-none">
+            <div class="vr"></div>
+            <div>
+                <h5>Cards</h5>
+                <h6 class="mb-0 text-center fw-normal">{{ current_user.cards|length }}</h6>
+            </div>
+        </div>
+        <br>
+        <h2>Actions</h2>
+        <div class="d-flex flex-column align-items-center p-3 gap-2">
+            <a href="{{ url_for('deleteaccount', username=current_user.username) }}" class="text-decoration-none">
                 <button class="btn btn-danger" type="button">
                     <i class="bi bi-trash3 me-2"></i>
                     Delete Account
                 </button>
             </a>
-            <a href="{{ url_for('home') }}" class="text-decoration-none">
+            <a href="{{ url_for('changepassword', username=current_user.username) }}" class="text-decoration-none">
                 <button class="btn btn-info" type="button">
                     <i class="bi bi-file-lock2 me-2"></i>
                     Change Password
                 </button>
             </a>
-            </div>
         </div>
     </div>
+
 </main>
 {% endblock %}
 {% block script %}

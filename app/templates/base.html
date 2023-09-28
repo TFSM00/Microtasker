@@ -108,7 +108,6 @@ Every Sidebar Link Icon must have "me-2" in the class
         <strong>{{ current_user.username }}</strong>
       </a>
       <ul class="dropdown-menu text-small shadow">
-        <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="{{ url_for('profile', username=current_user.username) }}">Profile</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>

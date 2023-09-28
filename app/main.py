@@ -12,7 +12,7 @@ from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
                          EditCardForm, LoginForm, RegisterForm, EditBoardForm,
-                         EditColForm, DeleteAccountForm)
+                         EditColForm, DeleteAccountForm, ChangePasswordForm)
 
 app, db, login_manager, gravatar = create_app()
 
@@ -76,12 +76,41 @@ def deleteaccount(username):
             db.session.delete(user)
             db.session.commit()
             return redirect(url_for('home'))
-        return redirect(url_for('deleteaccount', username=current_user.username))
+        return redirect(url_for('deleteaccount',
+                                username=current_user.username))
     return render_template('deleteaccount.html', form=form)
 
 
+@app.route("/profile/<username>/change-password", methods=["GET", "POST"])
+def changepassword(username):
+    form = ChangePasswordForm()
+    if username != current_user.username:
+        return abort(401)
 
-@app.route("/profile/<username>/")
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if check_password_hash(current_user.password,
+                                   form.current_password.data):
+                if form.new_password.data == form.confirm_password.data:
+                    user = db.session.query(User)\
+                        .filter_by(username=current_user.username)\
+                        .first()
+                    user.password = generate_password_hash(
+                                                form.new_password.data,
+                                                "pbkdf2:sha256", 8)
+                    db.session.commit()
+                    return redirect(url_for('profile',
+                                            username=current_user.username))
+                flash('Password confirmation mismatch')
+                return redirect(url_for('changepassword',
+                                        username=current_user.username))
+            flash('You inserted the wrong current password.')
+            return redirect(url_for('changepassword',
+                                    username=current_user.username))
+        flash('Something went wrong.')
+        return redirect(url_for('changepassword',
+                                username=current_user.username))
+    return render_template('changepassword.html', form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])

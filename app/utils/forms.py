@@ -82,3 +82,15 @@ class EditBoardForm(FlaskForm):
 class DeleteAccountForm(FlaskForm):
     verification = BooleanField(label='Yes, I want to delete my account')
     submit = SubmitField(label="Delete Account")
+
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField(label="Current password",
+                                     validators=[Length(min=5)])
+    new_password = PasswordField(label="New password",
+                                 validators=[DataRequired(),
+                                             Length(min=5)])
+    confirm_password = PasswordField(label="Confirm new password",
+                                     validators=[DataRequired(),
+                                                 Length(min=5)])
+    submit = SubmitField(label="Change password")

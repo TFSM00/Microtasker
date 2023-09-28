@@ -16,8 +16,8 @@
         {{ form.card_name.label(class_='form-label') }}
         {{ form.card_name(class_='form-control card-name', placeholder=card.card_name) }}
         {% for err in form.card_name.errors %}
-			<span style="color:red">{{ err }}</span>
-		{% endfor %}
+          <span style="color:red">{{ err }}</span>
+        {% endfor %}
     </div>
     <br>
     <div >
