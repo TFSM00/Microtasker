@@ -12,19 +12,19 @@
 
 {# Card Modal #}
 {% for card in board.cards %}
-    {{ modal(card) }}
+    {{ modal(card, current_user) }}
 {% endfor %}
 {#  #}
 
 <div class="container vh-100 px-0">
-    <div class="d-flex justify-content-center border border-left-0 border-right-0 sticky-top" id="header">
-        <div class="fs-4 badge border border-{{ theme() }} rounded-pill my-1" style="background-color: {{ board.color }}; width: 20%;">
+    <div class="d-flex justify-content-center border sticky-top" id="header" style="border-top: 0 !important; border-right: 0 !important;">
+        <div class="fs-4 badge border border-top-0 border-{{ theme() }} rounded-pill my-1" style="background-color: {{ board.color }};">
             {{ board.title }}
         </div>
     </div>
     <div class="row board-parent d-flex flex-nowrap px-2 vh-100">
         {% for col in board.columns %}
-        <div class="col-3 border border-top-0 border-bottom-0 board-child dropzone" id="{{ col.id }}">
+        <div class="col-3 border border-left-0 border-top-0 border-bottom-0 board-child dropzone" id="{{ col.id }}">
             <div class="d-flex justify-content-center my-2">
                 <div class="fs-4 badge rounded-pill border border-{{ theme() }} d-flex justify-content-center align-middle" style="background-color: {{ col.color }}; height: 40%;">
                     {{ col.column_name }}

@@ -18,7 +18,7 @@ Every Sidebar Link Icon must have "me-2" in the class
   {% endblock %}
 </head>
 {% block body %}
-<body>
+<body class="border">
 <div class="position-fixed bottom-0 end-0 mb-3 me-3 border rounded" id="btnSwitch">
     {# Create a call to theme to change it and save to current session #}
     {% if session.theme=='dark' %}
@@ -32,7 +32,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 </div> 
      
   <div class="d-flex">
-      <div class="sidebar border d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary sticky-top" style="width: 230px;">
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary sticky-top" style="width: 230px;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
       <img class="me-2 pe-none" src="/static/kanban.png" width="35" height="35">
       <span class="fs-4">Microtasker</span>
@@ -117,7 +117,7 @@ Every Sidebar Link Icon must have "me-2" in the class
 
   </div>
       {% block main %}
-      <main class="flex-grow-1">
+      <main class="flex-grow-1 border" style="border-right: 0 !important; border-top: 0 !important;">
           {% block content%}
           {% endblock %}
       </main>

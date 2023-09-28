@@ -11,7 +11,15 @@ body {
 }
 
 .sticky-top {
-  border-left: 0!important
+  border-left: 0 !important;
+}
+
+.modal-dialog{
+  overflow-y: initial !important;
+}
+.content-col{
+  overflow: auto;
+  max-height: 80vh;
 }
 
 .board-child {

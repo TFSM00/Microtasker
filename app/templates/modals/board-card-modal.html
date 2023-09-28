@@ -1,16 +1,17 @@
-{% macro modal(card)%}
+{% macro modal(card, current_user)%}
 <div class="modal fade" id="card-modal-{{ card.id }}" tabindex="-1" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalCenteredScrollableTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><h3>Card Viewer</h3></font></font></h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <h1 class="modal-title fs-5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><h3>Card Viewer</h3></font></font></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body row" style="height: 100%;">
-          <div class="col-8">
+      <div class="modal-body row">
+          <div class="col-8 content-col">
             <h4>{{ card.card_name }}</h4>
-            <p class="fs-6 fw-light">ID: {{ card.id }}</p>
+            <p class="fs-6 fw-light m-0">Board: {{ card.board.title }}</p>
+            <p class="fs-6 fw-light m-0">Column: {{ card.column.column_name }}</p>
             <hr>
 
             <h4>Description</h4>
@@ -21,8 +22,6 @@
             <p class="fs-6 text-break" style="white-space: pre-wrap">{{ card.card_content }}</p>
             <hr>
 
-            <h6>Card created by: </h6>
-            <p class="fw-bold" style="color: var(--bs-primary)">{{ card.user.username }}</p>
             <h6>Card created on: </h6>
             <p class="fs-6 fw-light">{{ card.date_created }} (UTC Time)</p>
             <h6>Last edited on: </h6>
@@ -41,6 +40,15 @@
               </a>
               <button type="button" class="w-100 m-1 text-start btn btn-warning btn-sm"><i class="bi bi-cone-striped me-2"></i>Under Construction</button>
             </span>
+            <div class="card" style="position:absolute; bottom:4%; width:17.8rem">
+              <div class="card-body">
+                <h5 class="card-title">Created by:</h5>
+                <div class="d-flex align-items-center text-decoration-none">
+                  <img src="{{ current_user.email | gravatar }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                  <strong>{{ current_user.username }}</strong>
+                </div>
+              </div>
+            </div>
           </div>
       </div>
     </div>
