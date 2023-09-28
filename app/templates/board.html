@@ -29,7 +29,7 @@
         <div class="col-3 border border-left-0 border-top-0 border-bottom-0 board-child dropzone" id="{{ col.id }}">
             <div class="d-flex justify-content-center my-2 position-relative">
                 <div class="fs-5 badge rounded-pill border border-{{ theme() }} d-flex justify-content-center align-middle" style="background-color: {{ col.color }}; height: 40%;">
-                <a href="{{ url_for('editcol', col_id=col.id) }}" class="text-decoration-none" style="color: inherit">
+                <a href="{{ url_for('editcol', col_id=col.id) }}" class="text-decoration-none" style="color: inherit; text-overflow: ellipsis">
                     {{ col.column_name }}
                 </a>
                 </div>
@@ -41,12 +41,10 @@
                     <div class="card w-100 mb-3">
                         <div class="card-body">
                             <div class="d-grid">
-                                <div class="row row-cols-2 d-flex justify-content-between">
-                                    <div class="col-auto d-flex flex-column gap-1">
-                                        <div class="fs-6 d-flex card-title border border-{{ theme() }} badge rounded-pill" style="width: max-content; background-color: {{ card.color }};">
-                                            {{ card.card_name }}
-                                        </div>
-                                        <p class="card-text m-0">{{ card.card_subtitle }}</p>
+                                <div class="row d-flex justify-content-between">
+                                    <div class="d-column gap-1">
+                                        <p class="fs-6 d-flex text-start text-break card-title border border-{{ theme() }} badge rounded-pill" style="width: fit-content; white-space: pre-line; background-color: {{ card.color }};">{{ card.card_name }}</p>
+                                        <p class="card-text text-start text-break m-0" style="white-space: pre-line">{{ card.card_subtitle }}</p>
                                         <small>{{ timeago(card.date_created|string) }}</small>
                                     </div>
                                 </div>
