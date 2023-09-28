@@ -59,3 +59,21 @@ class AddColForm(FlaskForm):
                             validators=[DataRequired(), Length(max=20)],
                             widget=ColorInput())
     submit = SubmitField(label='Add Column')
+
+
+class EditColForm(FlaskForm):
+    col_name = StringField(label='Column Name',
+                           validators=[DataRequired(), Length(max=50)])
+    col_color = StringField(label='Column Color',
+                            validators=[DataRequired(), Length(max=20)],
+                            widget=ColorInput())
+    submit = SubmitField(label='Edit Column')
+
+
+class EditBoardForm(FlaskForm):
+    title = StringField(label='Board Name',
+                        validators=[DataRequired(), Length(max=50)])
+    board_color = StringField(label='Board Color',
+                              validators=[DataRequired(), Length(max=20)],
+                              widget=ColorInput())
+    submit = SubmitField(label='Edit Board')

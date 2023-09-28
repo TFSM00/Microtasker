@@ -11,7 +11,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import create_app
 from models import Board, Card, Column, User
 from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
-                         EditCardForm, LoginForm, RegisterForm)
+                         EditCardForm, LoginForm, RegisterForm, EditBoardForm,
+                         EditColForm)
 
 app, db, login_manager, gravatar = create_app()
 
@@ -248,6 +249,65 @@ def createboard():
     return render_template('createboard.html', form=form)
 
 
+@app.route("/editboard/<int:board_id>", methods=["GET", "POST"])
+def editboard(board_id):
+    board_data = db.session.query(Board)\
+            .filter_by(id=board_id, user_id=current_user.id)\
+            .first()
+    if not board_data:
+        return abort(404)
+    form = EditBoardForm(
+            title=board_data.title,
+            board_color=board_data.color)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            board_data.title = form.title.data
+            board_data.color = form.board_color.data
+            board_data.last_edited = dt.datetime.utcnow()
+            db.session.commit()
+            return redirect(url_for('board', board_id=board_data.id))
+
+    return render_template('editboard.html',
+                           form=form,
+                           board=board_data)
+
+
+@app.route("/deleteboard/<int:board_id>")
+@login_required
+def deleteboard(board_id):
+    board_data = db.session.query(Board)\
+        .filter_by(id=board_id, user_id=current_user.id)\
+        .first()
+    if not board_data:
+        return abort(404)
+    db.session.delete(board_data)
+    db.session.commit()
+    return redirect(url_for('home'))
+
+
+@app.route("/editcol/<int:col_id>", methods=["GET", "POST"])
+def editcol(col_id):
+    col_data = db.session.query(Column)\
+            .filter_by(id=col_id, user_id=current_user.id)\
+            .first()
+    if not col_data:
+        return abort(404)
+    form = EditColForm(
+            col_name=col_data.column_name,
+            col_color=col_data.color)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            col_data.column_name = form.col_name.data
+            col_data.color = form.col_color.data
+            col_data.last_edited = dt.datetime.utcnow()
+            db.session.commit()
+            return redirect(url_for('board', board_id=col_data.board_id))
+
+    return render_template('editcolumn.html',
+                           form=form,
+                           col=col_data)
+
+
 @app.route("/addcol/<int:board_id>", methods=["GET", "POST"])
 @login_required
 def addcol(board_id):
@@ -292,6 +352,19 @@ def addcol(board_id):
                            board_id=board_object.id,
                            form=form,
                            cols=board_object.columns)
+
+
+@app.route("/deletecol/<int:col_id>")
+@login_required
+def deletecol(col_id):
+    col_data = db.session.query(Column)\
+        .filter_by(id=col_id, user_id=current_user.id)\
+        .first()
+    if not col_data:
+        return abort(404)
+    db.session.delete(col_data)
+    db.session.commit()
+    return redirect(url_for('board', board_id=col_data.board_id))
 
 
 @app.route('/update-position', methods=["POST"])

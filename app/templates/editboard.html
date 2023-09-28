@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{{ super() }}
+    <link rel="stylesheet" href="/static/css/sign-in.css">
+{% endblock %}
+
+{% block main %}
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+  <form class="form-signin" action="{{ url_for('editboard', board_id=board.id) }}" method="post">
+    <img class="mb-4" src="/static/kanban.png" alt="" width="50" height="50">
+    <h1 class="h3 mb-3 fw-normal">Edit Board</h1>
+
+    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="margin: auto; color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="form-floating">
+        {{ form.title(class_='form-control', type_='text', size=40, placeholder=board.title) }}
+        {{ form.title.label }}
+        {% for err in form.title.errors %}
+			    <span style="color:red">{{ err }}</span>
+		{% endfor %}
+    </div>
+    <br>
+    <div>
+      {{ form.board_color.label(class_='form-label') }}<br>
+      {{ form.board_color(class_='form-control form-control-color', placeholder=board.color) }}
+    </div>
+    <br>
+    <div class="d-flex justify-content-between">
+      {{ form.submit(class_='btn btn-success w-30 py-2') }}
+      <a href="{{ url_for('board', board_id=board.id) }}">
+          <button type="button" class="btn btn-primary w-30 py-2">Go to Board</button>
+      </a>
+      <a href="{{ url_for('deleteboard', board_id=board.id) }}">
+        <button type="button" class="btn btn-outline-danger w-30 py-2">
+          <i class="bi bi-x-circle"></i>            
+          Delete
+        </button>
+      </a>
+    </div>
+  </form>
+</main>
+{% endblock %}
+{% block script %}
+{{ super() }}
+{% endblock %}
