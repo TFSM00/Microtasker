@@ -60,19 +60,21 @@ Every Sidebar Link Icon must have "me-2" in the class
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               {% for board in current_user.boards %}
                 <li>
-                  <a href="{{ url_for('board', board_id=board.id)}}" class="d-inline-flex text-decoration-none rounded">
-                    <span class="fs-6 badge rounded-pill" style="background-color: {{ board.color }};">
+                  <a href="{{ url_for('board', board_id=board.id)}}" class="text-decoration-none rounded" style="max-width: 150px;">
+                    <p class="fs-6 badge m-0 overflow-hidden rounded-pill" style="background-color: {{ board.color }};">
                     <i class="bi bi-arrow-right-square me-2"></i>
-                    {{ board.title }}</span>
+                    <span class="text-start align-top text-ellipsis" style="display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
+                      {{ board.title }}
+                    </span>
+                    </p>
                   </a>
                 </li>
                 
               {% endfor %}
               <li>
-                <a href="{{ url_for('createboard') }}" class="d-inline-flex text-decoration-none rounded">
-                  <span class="fs-6 badge rounded-pill bg-success">
-                  <i class="bi bi-plus-circle me-2"></i>
-                  Create Board</span>
+                <a href="{{ url_for('createboard') }}" class="text-decoration-none rounded">
+                  <span class="align-middle fs-6 m-0 badge rounded-pill bg-success">
+                  <i class="bi bi-plus-circle me-2"></i>Create Board</span>
                 </a>
               </li>
             </ul>
@@ -107,7 +109,7 @@ Every Sidebar Link Icon must have "me-2" in the class
       </a>
       <ul class="dropdown-menu text-small shadow">
         <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('profile', username=current_user.username) }}">Profile</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
       </ul>
