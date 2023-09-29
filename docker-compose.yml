@@ -42,6 +42,8 @@ services:
 
 networks:
   flask_network:
+    driver:  bridge
+    enable_ipv6: false
 
 volumes:
   postgres_data:

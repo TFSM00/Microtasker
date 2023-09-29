@@ -51,11 +51,13 @@ def home():
 
 
 @app.route("/profile/<username>")
+@login_required
 def profile(username):
     return render_template('profile.html')
 
 
 @app.route("/profile/<username>/delete", methods=["GET", "POST"])
+@login_required
 def deleteaccount(username):
     form = DeleteAccountForm()
     if username != current_user.username:
@@ -82,6 +84,7 @@ def deleteaccount(username):
 
 
 @app.route("/profile/<username>/change-password", methods=["GET", "POST"])
+@login_required
 def changepassword(username):
     form = ChangePasswordForm()
     if username != current_user.username:
@@ -307,6 +310,7 @@ def createboard():
 
 
 @app.route("/editboard/<int:board_id>", methods=["GET", "POST"])
+@login_required
 def editboard(board_id):
     board_data = db.session.query(Board)\
             .filter_by(id=board_id, user_id=current_user.id)\
@@ -343,6 +347,7 @@ def deleteboard(board_id):
 
 
 @app.route("/editcol/<int:col_id>", methods=["GET", "POST"])
+@login_required
 def editcol(col_id):
     col_data = db.session.query(Column)\
             .filter_by(id=col_id, user_id=current_user.id)\
