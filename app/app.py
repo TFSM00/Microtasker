@@ -25,8 +25,8 @@ def create_app():
 
     app.jinja_env.globals['timeago'] = time_ago
 
-    gravatar = Gravatar(app, 
-                        size=100, 
+    gravatar = Gravatar(app,
+                        size=100,
                         rating='g',
                         default='retro',
                         force_default=False,
