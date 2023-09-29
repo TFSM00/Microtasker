@@ -1,5 +1,136 @@
 {% extends "base.html" %}
 
-{% block content %}
-{{ super() }}
+{% block main %}
+<main class="flex-grow-1 d-flex flex-column p-4">
+    <div class="container mb-4">
+        <div class="pt-5 pb-2 text-center bg-body-tertiary rounded-3">
+            <img src="/static/kanban.png" width="50" height="50">
+            <h1 class="text-body-emphasis">Microtasker</h1>
+            <p class="col-lg-8 mx-auto fs-5 text-muted">
+            A simple kanban task manager with boards, columns and cards, each tied to a user
+            </p>
+            <h5>Built by Tiago Moreira</h5>
+            <div class="d-inline-flex gap-2 mt-2 mb-5">
+                <a href="https://github.com/TFSM00" target="_blank">
+                    <button class="d-inline-flex align-items-center btn font-light btn-dark btn-lg px-4 rounded-pill" type="button">
+                        Github
+                        <img class="ms-2" src="/static/icons/github.svg" width="30" height="30" style="filter: invert(100%);">
+                    </button>  
+                </a>
+                <a href="https://www.linkedin.com/in/tiago-moreira00/" target="_blank">
+                    <button class="d-inline-flex align-items-center btn border border-primary font-dark btn-light btn-lg px-4 rounded-pill" type="button">
+                        LinkedIn
+                        <img class="ms-2" src="/static/icons/linkedin.svg" width="30" height="30" >
+                    </button>    
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <section class="pt-3 pb-5 border-bottom border-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up">
+            <!-- Heading -->
+            <h3>
+              Frontend
+            </h3>
+            <!-- Icon -->
+            <div class="icon text-primary mb-3">
+                <div class="rounded-pill badge border bg-light px-3">
+                <img src="/static/icons/bootstrap.svg" width="30" height="30">
+                <img src="/static/icons/css-3.svg" width="30" height="30">
+                <img src="/static/icons/js.svg" width="30" height="30">
+                </div>
+            </div>
+            <!-- Text -->
+            <p class="text-body-secondary mb-6 mb-md-0">
+              The styling was mainly created using Bootstrap, with some custom changes with CSS and Javascript for conditional styling.
+            </p>
+          </div>
+
+          <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up">
+            <!-- Heading -->
+            <h3>
+              Backend
+            </h3>
+            <!-- Icon -->
+            <div class="icon text-primary mb-3">
+                <div class="rounded-pill badge border bg-light px-3">
+                <img src="/static/icons/python.svg" width="30" height="30">
+                <img src="/static/icons/flask.svg" width="30" height="30">
+                </div>
+            </div>
+            <!-- Text -->
+            <p class="text-body-secondary mb-6 mb-md-0">
+              The backend is all in Python using the Flask web development library.
+            </p>
+          </div>
+          <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up">
+            <!-- Heading -->
+            <h3>
+              Deployment
+            </h3>
+            <!-- Icon -->
+            <div class="icon text-primary mb-3">
+                <div class="rounded-pill badge border bg-light px-3">
+                    <img src="/static/icons/docker.svg" width="30" height="30">
+                    <img src="/static/icons/github.svg" width="30" height="30">
+                </div>
+            </div>
+            <!-- Text -->
+            <p class="text-body-secondary mb-6 mb-md-0">
+               The whole website is deployed using Docker Compose. The containers are built on trigger from Github Actions, looking for push actions.
+            </p>
+          </div>
+        </div> <!-- / .row -->
+        <br>
+        <div class="row d-flex justify-content-center">
+          <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up">
+            <!-- Heading -->
+            <h3>
+              Hosting
+            </h3>
+            <!-- Icon -->
+            <div class="icon text-primary mb-3">
+                <div class="rounded-pill badge border bg-light px-3">
+                <img src="/static/icons/raspberry-pi.svg" width="30" height="30">
+                <img src="/static/icons/nginx.svg" width="30" height="30">
+                </div>
+            </div>
+            <!-- Text -->
+            <p class="text-body-secondary mb-6 mb-md-0">
+              The website is hosted within my own Raspberry Pi 4 Model B (1.8GHz - 8GB RAM), using Nginx as reverse proxy.
+            </p>
+          </div>
+
+          <div class="col-12 col-md-4 aos-init aos-animate" data-aos="fade-up">
+            <!-- Heading -->
+            <h3>
+              Database
+            </h3>
+            <!-- Icon -->
+            <div class="icon text-primary mb-3">
+                <div class="rounded-pill badge border bg-light px-3">
+                <img src="/static/icons/postgresql.svg" width="30" height="30">
+                </div>
+            </div>
+            <!-- Text -->
+            <p class="text-body-secondary mb-6 mb-md-0">
+              All data is stored in a container with a Postgresql DB, controlled by Python's SQL Alchemy ORM.
+            </p>
+          </div>
+          
+        </div> <!-- / .row -->
+      </div> <!-- / .container -->
+    </section>
+    <br>
+    <h2>Password Protection</h2>
+    <p>This website uses a very high standard of password protection.
+    When you sign up on this website, your password is transformed into a hash and salted (<a href="https://www.okta.com/blog/2019/03/what-are-salted-passwords-and-password-hashing/" target="_blank">read more</a>).
+    Every time you login, the password you entered is hashed and compared to the hash in the database.
+    By using salting, even if your password is the same as someone elses in the database, the salting ensures the hashes are different.
+    The <a href="https://en.wikipedia.org/wiki/SHA-2" target="_blank">SHA256</a> algorithm is used to create the hash.</p>
+
+</main>
 {% endblock %}
