@@ -4,6 +4,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_gravatar import Gravatar
 from flask_login import LoginManager
+from flask_session import Session
 
 from models import db
 from os import environ
@@ -34,6 +35,7 @@ def create_app():
                         base_url=None)
 
     Bootstrap(app)
+    Session(app)
     app.app_context().push()
     login_manager = LoginManager()
     login_manager.init_app(app)
