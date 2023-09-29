@@ -2,7 +2,7 @@ import datetime as dt
 
 from flask import (flash, redirect, render_template, request,
                    session, url_for, abort)
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import current_user, login_user, logout_user
 
 from functools import wraps
 
@@ -125,7 +125,7 @@ def login():
                 login_user(user,
                            remember=form.remember_me.data,
                            duration=dt.timedelta(days=30))
-                return redirect(url_for('home'))
+                return render_template('index.html')
 
             flash('Wrong password. Try again.')
             return redirect(url_for('login'))

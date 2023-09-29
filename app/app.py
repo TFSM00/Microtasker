@@ -37,9 +37,9 @@ def create_app():
     Bootstrap(app)
     Session(app)
     app.app_context().push()
-    login_manager = LoginManager()
-    login_manager.init_app(app)
     db.init_app(app)
     db.create_all()
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
     return app, db, login_manager, gravatar

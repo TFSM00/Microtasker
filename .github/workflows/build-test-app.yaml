@@ -20,3 +20,4 @@ jobs:
         ssh_port: ${{ secrets.SSH_PORT }}
         docker_compose_prefix: microtasker
         docker_compose_filename: docker-compose.yml
+        docker_compose_down: 'true'
