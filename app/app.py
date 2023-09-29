@@ -18,7 +18,7 @@ def create_app():
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = PROD_DB
     app.config['SECRET_KEY'] = uuid.uuid4().hex
-    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_PERMANENT'] = True
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=6)
 
@@ -35,9 +35,9 @@ def create_app():
 
     Bootstrap(app)
     app.app_context().push()
-    db.init_app(app)
-    db.create_all()
     login_manager = LoginManager()
     login_manager.init_app(app)
+    db.init_app(app)
+    db.create_all()
 
     return app, db, login_manager, gravatar

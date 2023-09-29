@@ -19,7 +19,7 @@ app, db, login_manager, gravatar = create_app()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, user_id)
+    return db.session.get(User, int(user_id))
 
 
 def admin_only(func):
