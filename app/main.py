@@ -51,13 +51,11 @@ def home():
 
 
 @app.route("/profile/<username>")
-@login_required
 def profile(username):
     return render_template('profile.html')
 
 
 @app.route("/profile/<username>/delete", methods=["GET", "POST"])
-@login_required
 def deleteaccount(username):
     form = DeleteAccountForm()
     if username != current_user.username:
@@ -84,7 +82,6 @@ def deleteaccount(username):
 
 
 @app.route("/profile/<username>/change-password", methods=["GET", "POST"])
-@login_required
 def changepassword(username):
     form = ChangePasswordForm()
     if username != current_user.username:
@@ -180,7 +177,6 @@ def register():
 
 
 @app.route("/board/<int:board_id>", methods=["GET"])
-@login_required
 def board(board_id):
     board_object = db.session.query(Board)\
         .filter_by(id=board_id, user_id=current_user.id)\
@@ -191,7 +187,6 @@ def board(board_id):
 
 
 @app.route("/delete/<int:board_id>/<int:card_id>")
-@login_required
 def delete(card_id, board_id):
     card_data = db.session.query(Card)\
         .filter_by(id=card_id, user_id=current_user.id)\
@@ -204,14 +199,12 @@ def delete(card_id, board_id):
 
 
 @app.route("/card/<int:card_id>", methods=["GET", "POST"])
-@login_required
 def card(card_id):
     form = CreateCardForm()
     return render_template('card.html', form=form)
 
 
 @app.route("/editcard/<int:card_id>", methods=["GET", "POST"])
-@login_required
 def editcard(card_id):
     card_data = db.session.query(Card)\
         .filter_by(id=card_id, user_id=current_user.id)\
@@ -244,7 +237,6 @@ def editcard(card_id):
 
 
 @app.route("/newcard/<int:col_id>", methods=["GET", "POST"])
-@login_required
 def newcard(col_id):
     form = CreateCardForm()
     col_object = db.session.query(Column)\
@@ -275,7 +267,6 @@ def newcard(col_id):
 
 
 @app.route("/createboard", methods=["GET", "POST"])
-@login_required
 def createboard():
     form = CreateBoardForm()
     if request.method == "POST":
@@ -310,7 +301,6 @@ def createboard():
 
 
 @app.route("/editboard/<int:board_id>", methods=["GET", "POST"])
-@login_required
 def editboard(board_id):
     board_data = db.session.query(Board)\
             .filter_by(id=board_id, user_id=current_user.id)\
@@ -334,7 +324,6 @@ def editboard(board_id):
 
 
 @app.route("/deleteboard/<int:board_id>")
-@login_required
 def deleteboard(board_id):
     board_data = db.session.query(Board)\
         .filter_by(id=board_id, user_id=current_user.id)\
@@ -347,7 +336,6 @@ def deleteboard(board_id):
 
 
 @app.route("/editcol/<int:col_id>", methods=["GET", "POST"])
-@login_required
 def editcol(col_id):
     col_data = db.session.query(Column)\
             .filter_by(id=col_id, user_id=current_user.id)\
@@ -371,7 +359,6 @@ def editcol(col_id):
 
 
 @app.route("/addcol/<int:board_id>", methods=["GET", "POST"])
-@login_required
 def addcol(board_id):
     form = AddColForm()
     if request.method == "POST":
@@ -417,7 +404,6 @@ def addcol(board_id):
 
 
 @app.route("/deletecol/<int:col_id>")
-@login_required
 def deletecol(col_id):
     col_data = db.session.query(Column)\
         .filter_by(id=col_id, user_id=current_user.id)\
@@ -430,7 +416,6 @@ def deletecol(col_id):
 
 
 @app.route('/update-position', methods=["POST"])
-@login_required
 def update_position():
     col_id = request.form['col_id']
     card_id = request.form['card_id']
