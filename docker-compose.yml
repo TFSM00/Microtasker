@@ -28,7 +28,7 @@ services:
       - env-vars.txt
 
   db:
-    image: postgres:13
+    image: postgres:latest
     restart: always
     ports:
       - 5432:5432
