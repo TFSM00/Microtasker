@@ -36,7 +36,7 @@ def create_app():
     Bootstrap(app)
     app.app_context().push()
     db.init_app(app)
-    # db.create_all()
+    db.create_all()
     login_manager = LoginManager()
     login_manager.init_app(app)
 
