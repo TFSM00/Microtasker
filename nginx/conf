@@ -1,7 +1,8 @@
 server {
     listen              8080 ssl;
 
-    ssl_certificate      /etc/nginx/certificate.crt;
+    ssl                 on;  
+    ssl_certificate     /etc/nginx/certificate.crt;
     ssl_certificate_key /etc/nginx/private.key;
 
     server_name localhost;
