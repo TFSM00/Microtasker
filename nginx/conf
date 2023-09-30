@@ -1,5 +1,5 @@
 server {
-    listen              443 ssl;
+    listen              8080 ssl;
 
     ssl                 on;
     ssl_cetificate      /etc/nginx/certificate.crt;
