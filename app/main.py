@@ -1,7 +1,7 @@
 import datetime as dt
 
 from flask import (flash, redirect, render_template, request,
-                   session, url_for, abort, send_from_directory)
+                   session, url_for, abort, send_file)
 from flask_login import current_user, login_user, logout_user
 
 from functools import wraps
@@ -36,7 +36,7 @@ def admin_only(func):
 
 @app.route("/.well-known/pki-validation/<file>")
 def https(file):
-    return send_from_directory("/static/", file)
+    return send_file(f"/static/{file}", as_attachment=True)
 
 
 @app.route("/theme", methods=["GET"])
