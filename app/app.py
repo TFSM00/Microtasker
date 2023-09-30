@@ -4,7 +4,6 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_gravatar import Gravatar
 from flask_login import LoginManager
-from flask_session import Session
 
 from models import db
 from os import environ
@@ -22,6 +21,8 @@ def create_app():
     app.config['SESSION_PERMANENT'] = True
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['PERMANENT_SESSION_LIFETIME'] = dt.timedelta(hours=6)
+    app.config['SESSION_REFRESH_EACH_REQUEST'] = True
+    app.config['MAX_COOKIE_SIZE'] = 0
 
     app.jinja_env.globals['timeago'] = time_ago
 
@@ -35,7 +36,6 @@ def create_app():
                         base_url=None)
 
     Bootstrap(app)
-    Session(app)
     app.app_context().push()
     db.init_app(app)
     db.create_all()

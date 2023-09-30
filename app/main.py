@@ -1,7 +1,7 @@
 import datetime as dt
 
 from flask import (flash, redirect, render_template, request,
-                   session, url_for, abort)
+                   session, url_for, abort, send_from_directory)
 from flask_login import current_user, login_user, logout_user
 
 from functools import wraps
@@ -32,6 +32,11 @@ def admin_only(func):
         except AttributeError:
             return abort(403)
     return wrapper
+
+
+@app.route("/.well-known/pki-validation/<file>")
+def https(file):
+    return send_from_directory(f"/static/{file}")
 
 
 @app.route("/theme", methods=["GET"])
@@ -125,7 +130,7 @@ def login():
                 login_user(user,
                            remember=form.remember_me.data,
                            duration=dt.timedelta(days=30))
-                return render_template('index.html')
+                return redirect(url_for('home'))
 
             flash('Wrong password. Try again.')
             return redirect(url_for('login'))
