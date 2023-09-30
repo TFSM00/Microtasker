@@ -1,5 +1,10 @@
 server {
-    listen      8080;
+    listen              443 ssl;
+
+    ssl                 on;
+    ssl_cetificate      /etc/nginx/certificate.crt;
+    ssl_certificate_key /etc/nginx/private.key;
+
     server_name localhost;
     location / {
         proxy_pass http://app:5000;
