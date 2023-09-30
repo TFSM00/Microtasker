@@ -14,20 +14,16 @@ services:
       - db
     env_file:
       - env-vars.txt
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
 
   nginx:
     build: nginx
     restart: always
     ports:
-      - 443:443
+      - 8080:8080
     networks:
       - flask_network
     env_file:
       - env-vars.txt
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
 
   db:
     image: postgres:latest
@@ -40,8 +36,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - env-vars.txt
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
     
 
 networks:
