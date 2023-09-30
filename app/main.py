@@ -36,7 +36,7 @@ def admin_only(func):
 
 @app.route("/.well-known/pki-validation/<file>")
 def https(file):
-    return send_from_directory(f"/static/{file}")
+    return send_from_directory("/static/", file)
 
 
 @app.route("/theme", methods=["GET"])
