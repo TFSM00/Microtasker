@@ -19,7 +19,7 @@ app, db, login_manager, gravatar = create_app()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))
+    return User.query.get(int(user_id))
 
 
 def admin_only(func):
@@ -32,11 +32,6 @@ def admin_only(func):
         except AttributeError:
             return abort(403)
     return wrapper
-
-
-@app.route("/.well-known/pki-validation/<file>")
-def https(file):
-    return send_file(f"/static/{file}", as_attachment=True)
 
 
 @app.route("/theme", methods=["GET"])

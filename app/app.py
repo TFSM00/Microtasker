@@ -40,6 +40,7 @@ def create_app():
     db.init_app(app)
     db.create_all()
     login_manager = LoginManager()
+    login_manager.login_view = 'login'
     login_manager.init_app(app)
 
     return app, db, login_manager, gravatar
