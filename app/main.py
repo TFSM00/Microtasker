@@ -16,7 +16,7 @@ from utils.forms import (AddColForm, CreateBoardForm, CreateCardForm,
 
 app, db, login_manager, gravatar = create_app()
 
-@app.before_request
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, user_id)
